@@ -289,6 +289,30 @@ shinyServer(function(input, output) {
            ")
     
   })
+  
+  # SVM
+  ##Modèle
+  
+  svm.fit <- reactive({model_svm=svm(form,data=train_ub,type="C-classification",kernel=input$noyau,cost=input$cout,gamma=gamma_opt,probability=TRUE)})
+  
+  svm.pred <- reactive({predict(svm.fit(), test, probability=TRUE)})
+  
+  cmsvm <- reactive({pred <- svm.pred()
+  confusionMatrix(test$Class, pred)})
+  
+  ##Matrice de confusion
+  output$m_svm <- renderPlot({
+    draw_confusion_matrix(cmsvm(), cols[1])
+  })
+  
+  output$optimal_svm <- renderText({ 
+    paste( "Le paramètre de coût de pénalisation qui permet de minimiser le taux d'erreur est de", cost_opt,". <br> <br>")
+  })
+  
+  
+  
+  
+  
   output$p1 <- renderText({paste("\n", "&nbsp; &nbsp; Dans la base de données <em> creditcard </em>, les cas de défaut ne représentent que <strong> 0.1727486% </strong> des observations.
                                        Nos données sont donc largement asymétriques, comme nous le montre le graphique suivant,
                                        dans lequel la colonne des cas de défaut est presque invisible.", "\n","\n",
