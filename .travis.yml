@@ -28,9 +28,7 @@ r_packages:
   - corrplot
   - ROCR
   - xgboost
-  - gbm
-  - pROC
-  - ROSE
+
   
 script:
   - R -f deploy.R
