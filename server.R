@@ -9,133 +9,135 @@ library(corrplot)
 library(ROCR)
 library(xgboost)
 
-####Base de données####
-bdd <- readRDS(file = 'base.rds')
 
-bdd$Class <- as.factor(bdd$Class)
-form <- Class~.
-
-idx <- sample(1:nrow(bdd), as.integer(0.75*nrow(bdd)))
-train <- bdd[idx, ]
-test <- bdd[-idx, ]
-
-X <- train[,-ncol(train)]
-Y <- train$Class
-newData <- ubBalance(X, Y, type="ubUnder", positive=1, perc=8, method="percPos")
-train_ub <- as.data.frame(cbind(newData$X, newData$Y))
-colnames(train_ub)[colnames(train_ub)=="newData$Y"] <- "Class"
-
-
-####Fonctions#####
-### Fonction des P-values des corrélations ###
-cor.mtest <- function(mat, ...) {
-  mat <- as.matrix(mat)
-  n <- ncol(mat)
-  p.mat<- matrix(NA, n, n)
-  diag(p.mat) <- 0
-  for (i in 1:(n - 1)) {
-    for (j in (i + 1):n) {
-      tmp <- cor.test(mat[, i], mat[, j], ...)
-      p.mat[i, j] <- p.mat[j, i] <- tmp$p.value
-    }
-  }
-  colnames(p.mat) <- rownames(p.mat) <- colnames(mat)
-  p.mat
-}
-
-### Couleur des modèles ###
-cols <- c('Support Vector Machine'= '#6A4A3C', 'Régression Logistique'= '#00A0B0', 'KNN' = '#CC333F', 'Random Forest'= '#EB6841', 'Gradient Boosting' = '#EDC951')
-
-###Création Matrice de confusion en Plot###
-draw_confusion_matrix <- function(cm, color) {
-  
-  layout(matrix(c(1,1,2)))
-  par(mar=c(2,2,2,2))
-  plot(c(100, 345), c(300, 450), type = "n", xlab="", ylab="", xaxt='n', yaxt='n')
-  title('MATRICE DE CONFUSION', cex.main=2)
-  
-  # Création de la matrice
-  rect(150, 430, 240, 370, col=color)
-  text(195, 435, 'Pas de défaut', cex=1.2)
-  rect(250, 430, 340, 370, col='white')
-  text(295, 435, 'Défaut', cex=1.2)
-  text(125, 370, 'Prédiction', cex=1.3, srt=90, font=2)
-  text(245, 450, 'Observation', cex=1.3, font=2)
-  rect(150, 305, 240, 365, col='white')
-  rect(250, 305, 340, 365, col=color)
-  text(140, 400, 'Pas de défaut', cex=1.2, srt=90)
-  text(140, 335, 'Défaut', cex=1.2, srt=90)
-  
-  # Ajout des informations de la matrice 
-  res <- as.numeric(cm$table)
-  text(195, 400, res[1], cex=1.6, font=2, col='white')
-  text(195, 335, res[2], cex=1.6, font=2, col='black')
-  text(295, 400, res[3], cex=1.6, font=2, col='black')
-  text(295, 335, res[4], cex=1.6, font=2, col='white')
-  
-  # Ajout des statistiques : sensitivité, spécificité, précision
-  plot(c(100, 0), c(100, 0), type = "n", xlab="", ylab="", main = "STATISTIQUES", cex.main=1.8, xaxt='n', yaxt='n')
-  text(10, 85, "Sensitivité", cex=1.2, font=2)
-  text(10, 70, paste(round(as.numeric(cm$byClass[1])*100, 3), '%'), cex=1.2)
-  text(50, 85, "Spécificité", cex=1.2, font=2)
-  text(50, 70, paste(round(as.numeric(cm$byClass[2])*100, 3), '%'), cex=1.2)
-  text(90, 85, "Précision", cex=1.2, font=2)
-  text(90, 70, paste(round(as.numeric(cm$byClass[5])*100, 3), '%'), cex=1.2)
-  
-  
-  # Ajout des taux d'exactitude et d'erreur
-  text(30, 35, "Taux d'exactitude", cex=1.5, font=2)
-  text(30, 20, paste(round(as.numeric(cm$overall[1])*100, 3), '%'), cex=1.4)
-  text(70, 35, "Taux d'erreur", cex=1.5, font=2)
-  text(70, 20, paste(round((1 - sum(diag(cm$table))/sum(cm$table))*100, 3),"%"), cex=1.4)
-}
-
-#Fonction taux d'erreur
-erreur<-function(matrice){
-  paste(round((matrice$table[[2]]+matrice$table[[3]])/sum(matrice$table)*100, 3),"%")
-  
-}
-
-
-#Optimisation du Random Forest
-TrainData <- train_ub[,-31] 
-TrainClasses <- train_ub[,31] 
-rf.fcttrain <- train(TrainData, TrainClasses, method = "rf", trControl = trainControl(method = "cv"))
-mtry_opt <- as.integer(rf.fcttrain$bestTune)
-taux_erreur_ntree <- vector()
-ntr <- c(1,seq(10,500,by=10))
-for(j in ntr){
-  rf.datant <- randomForest(form, train_ub, mtry=mtry_opt, ntree=j)
-  rf.datant.pred <- predict(rf.datant,newdata=test)
-  txerreur <- mean(rf.datant.pred!=test$Class)
-  taux_erreur_ntree <- rbind(taux_erreur_ntree,txerreur)
-}
-ntree_opt <- ntr[which.min(taux_erreur_ntree)]
-
-#Optimisation du Gradient Boosting
-xgb_model = train(TrainData, TrainClasses, trControl = trainControl(method = "cv"), method = "xgbTree")
-best_gb=xgb_model$bestTune
-
-TrainData=as.matrix(TrainData)
-TrainClasses=as.matrix(TrainClasses)
-boost.fit <- xgboost(data=TrainData,label=TrainClasses, eta=best_gb[[3]],nrounds=best_gb[[1]], max_depth=best_gb[[2]],
-                     colsample_bytree=best_gb[[5]],subsample=best_gb[[7]],min_child_weight=best_gb[[6]],gamma=best_gb[[4]],verbose=0)
-boost.pred <- predict(boost.fit, newdata=as.matrix(test[,-31]))
-prediction <- as.numeric(boost.pred > 0.5)
-boost.pred.class <- factor(ifelse(boost.pred>0.5, 1,0))
-err_gb=mean(boost.pred.class!=test$Class)
-shrinkage_opt=best_gb[[3]]
-max_prof_opt=best_gb[[2]]
-
-#Optimisation du SVM
-train.X=train_ub[,-31]
-train.Y=train_ub[,31]
-SVM.tune <- tune(svm,train.X,train.Y,kernel="linear", ranges=list(cost=2^(-3:3), gamma=2^(-2:2)))
-cost_opt=SVM.tune$best.parameters[[1]]
-gamma_opt=SVM.tune$best.parameters[[2]]  
 
 
 shinyServer(function(input, output) {
+  
+  ####Base de données####
+  bdd <- readRDS(file = 'base.rds')
+  
+  bdd$Class <- as.factor(bdd$Class)
+  form <- Class~.
+  
+  idx <- sample(1:nrow(bdd), as.integer(0.75*nrow(bdd)))
+  train <- bdd[idx, ]
+  test <- bdd[-idx, ]
+  
+  X <- train[,-ncol(train)]
+  Y <- train$Class
+  newData <- ubBalance(X, Y, type="ubUnder", positive=1, perc=8, method="percPos")
+  train_ub <- as.data.frame(cbind(newData$X, newData$Y))
+  colnames(train_ub)[colnames(train_ub)=="newData$Y"] <- "Class"
+  
+  
+  ####Fonctions#####
+  ### Fonction des P-values des corrélations ###
+  cor.mtest <- function(mat, ...) {
+    mat <- as.matrix(mat)
+    n <- ncol(mat)
+    p.mat<- matrix(NA, n, n)
+    diag(p.mat) <- 0
+    for (i in 1:(n - 1)) {
+      for (j in (i + 1):n) {
+        tmp <- cor.test(mat[, i], mat[, j], ...)
+        p.mat[i, j] <- p.mat[j, i] <- tmp$p.value
+      }
+    }
+    colnames(p.mat) <- rownames(p.mat) <- colnames(mat)
+    p.mat
+  }
+  
+  ### Couleur des modèles ###
+  cols <- c('Support Vector Machine'= '#6A4A3C', 'Régression Logistique'= '#00A0B0', 'KNN' = '#CC333F', 'Random Forest'= '#EB6841', 'Gradient Boosting' = '#EDC951')
+  
+  ###Création Matrice de confusion en Plot###
+  draw_confusion_matrix <- function(cm, color) {
+    
+    layout(matrix(c(1,1,2)))
+    par(mar=c(2,2,2,2))
+    plot(c(100, 345), c(300, 450), type = "n", xlab="", ylab="", xaxt='n', yaxt='n')
+    title('MATRICE DE CONFUSION', cex.main=2)
+    
+    # Création de la matrice
+    rect(150, 430, 240, 370, col=color)
+    text(195, 435, 'Pas de défaut', cex=1.2)
+    rect(250, 430, 340, 370, col='white')
+    text(295, 435, 'Défaut', cex=1.2)
+    text(125, 370, 'Prédiction', cex=1.3, srt=90, font=2)
+    text(245, 450, 'Observation', cex=1.3, font=2)
+    rect(150, 305, 240, 365, col='white')
+    rect(250, 305, 340, 365, col=color)
+    text(140, 400, 'Pas de défaut', cex=1.2, srt=90)
+    text(140, 335, 'Défaut', cex=1.2, srt=90)
+    
+    # Ajout des informations de la matrice 
+    res <- as.numeric(cm$table)
+    text(195, 400, res[1], cex=1.6, font=2, col='white')
+    text(195, 335, res[2], cex=1.6, font=2, col='black')
+    text(295, 400, res[3], cex=1.6, font=2, col='black')
+    text(295, 335, res[4], cex=1.6, font=2, col='white')
+    
+    # Ajout des statistiques : sensitivité, spécificité, précision
+    plot(c(100, 0), c(100, 0), type = "n", xlab="", ylab="", main = "STATISTIQUES", cex.main=1.8, xaxt='n', yaxt='n')
+    text(10, 85, "Sensitivité", cex=1.2, font=2)
+    text(10, 70, paste(round(as.numeric(cm$byClass[1])*100, 3), '%'), cex=1.2)
+    text(50, 85, "Spécificité", cex=1.2, font=2)
+    text(50, 70, paste(round(as.numeric(cm$byClass[2])*100, 3), '%'), cex=1.2)
+    text(90, 85, "Précision", cex=1.2, font=2)
+    text(90, 70, paste(round(as.numeric(cm$byClass[5])*100, 3), '%'), cex=1.2)
+    
+    
+    # Ajout des taux d'exactitude et d'erreur
+    text(30, 35, "Taux d'exactitude", cex=1.5, font=2)
+    text(30, 20, paste(round(as.numeric(cm$overall[1])*100, 3), '%'), cex=1.4)
+    text(70, 35, "Taux d'erreur", cex=1.5, font=2)
+    text(70, 20, paste(round((1 - sum(diag(cm$table))/sum(cm$table))*100, 3),"%"), cex=1.4)
+  }
+  
+  #Fonction taux d'erreur
+  erreur<-function(matrice){
+    paste(round((matrice$table[[2]]+matrice$table[[3]])/sum(matrice$table)*100, 3),"%")
+    
+  }
+  
+  
+  #Optimisation du Random Forest
+  TrainData <- train_ub[,-31] 
+  TrainClasses <- train_ub[,31] 
+  rf.fcttrain <- train(TrainData, TrainClasses, method = "rf", trControl = trainControl(method = "cv"))
+  mtry_opt <- as.integer(rf.fcttrain$bestTune)
+  taux_erreur_ntree <- vector()
+  ntr <- c(1,seq(10,500,by=10))
+  for(j in ntr){
+    rf.datant <- randomForest(form, train_ub, mtry=mtry_opt, ntree=j)
+    rf.datant.pred <- predict(rf.datant,newdata=test)
+    txerreur <- mean(rf.datant.pred!=test$Class)
+    taux_erreur_ntree <- rbind(taux_erreur_ntree,txerreur)
+  }
+  ntree_opt <- ntr[which.min(taux_erreur_ntree)]
+  
+  #Optimisation du Gradient Boosting
+  xgb_model = train(TrainData, TrainClasses, trControl = trainControl(method = "cv"), method = "xgbTree")
+  best_gb=xgb_model$bestTune
+  
+  TrainData=as.matrix(TrainData)
+  TrainClasses=as.matrix(TrainClasses)
+  boost.fit <- xgboost(data=TrainData,label=TrainClasses, eta=best_gb[[3]],nrounds=best_gb[[1]], max_depth=best_gb[[2]],
+                       colsample_bytree=best_gb[[5]],subsample=best_gb[[7]],min_child_weight=best_gb[[6]],gamma=best_gb[[4]],verbose=0)
+  boost.pred <- predict(boost.fit, newdata=as.matrix(test[,-31]))
+  prediction <- as.numeric(boost.pred > 0.5)
+  boost.pred.class <- factor(ifelse(boost.pred>0.5, 1,0))
+  err_gb=mean(boost.pred.class!=test$Class)
+  shrinkage_opt=best_gb[[3]]
+  max_prof_opt=best_gb[[2]]
+  
+  #Optimisation du SVM
+  train.X=train_ub[,-31]
+  train.Y=train_ub[,31]
+  SVM.tune <- tune(svm,train.X,train.Y,kernel="linear", ranges=list(cost=2^(-3:3), gamma=2^(-2:2)))
+  cost_opt=SVM.tune$best.parameters[[1]]
+  gamma_opt=SVM.tune$best.parameters[[2]]  
   
   output$pre <- renderText({
     paste( "<br> <br> Dans le cadre de notre cursus universitaire, nous avons mis en place un démonstrateur sous R Shiny afin de montrer l'implémentation 
