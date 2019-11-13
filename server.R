@@ -485,9 +485,9 @@ shinyServer(function(input, output) {
                                   sep="<br/>")})
   
   output$p2b <- renderText({paste("&nbsp;- Le <strong> sur-échantillonnage </strong> : consiste à augmenter le nombre d’observations de la classe minoritaire en créant 
-                                                         des observations artificielles.<br/>",
+                                                         des observations artificielles.",
                                   "&nbsp;- Le <strong> sous-échantillonnage </strong> : enlève des observations de la classe majoritaire. 
-                                                         Le choix des observations à supprimer peut se faire aléatoirement ou selon des critères spécifiques.")})
+                                                         Le choix des observations à supprimer peut se faire aléatoirement ou selon des critères spécifiques.", sep="<br/>")})
   
   output$p2c <- renderText({paste("\n","&nbsp; &nbsp; En général, le sur-échantillonnage est préféré car il ne suppose pas la perte d’une partie des données, 
                                                mais le sous-apprentissage peut aussi aider lorsque l’échantillon est considéré trop large.",
