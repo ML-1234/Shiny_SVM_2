@@ -267,7 +267,19 @@ shinyServer(function(input, output) {
   })
   
   
+  # Régression logistique
+  ##Modèle
   
+  glm.fit <- reactive({glm(form,data=train_ub,family="binomial")})
+  glm.prob <- reactive({predict(glm.fit(), test, type="response")})
+  
+  cmrl <- reactive({glm.pred <- factor(ifelse(glm.prob()>0.5, 1,0))
+  confusionMatrix(glm.pred, test$Class)})
+  
+  ##Matrice de confusion
+  output$confusion_RL <- renderPlot({
+    draw_confusion_matrix(cmrl(), cols[2])
+  })
   
   
   
