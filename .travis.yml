@@ -1,0 +1,46 @@
+dist: xenial
+sudo: false
+latex: true
+language: r
+r: release
+
+warnings_are_errors: false
+
+cache:
+  packages: true
+  
+apt_packages:
+  - libgdal-dev
+  - libudunits2-dev
+
+r_packages:
+  - rsconnect
+  - shiny
+  - shinythemes
+  - tidyverse
+  - kableExtra
+  - randomForest
+  - unbalanced
+  - e1071
+  - caret
+  - class
+  - ggplot2
+  - corrplot
+  - ROCR
+  - xgboost
+  - gbm
+  - pROC
+  - ROSE
+  
+script:
+  - R -f deploy.R
+
+notifications:
+  email:
+   - maudlaval@wanadoo.fr
+   
+  email:
+    recipients:
+     - maudlaval@wanadoo.fr
+    on_success: <always|never|change>  # default: change
+    on_failure: <always|never|change>  # default: always
