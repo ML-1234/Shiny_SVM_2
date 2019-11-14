@@ -98,6 +98,48 @@ shinyServer(function(input, output) {
     text(70, 20, paste(round((1 - sum(diag(cm$table))/sum(cm$table))*100, 3),"%"), cex=1.4)
   }
   
+  #### AJOUT COMMIT OPTIMISATION ####
+  
+  #Optimisation du Random Forest
+  TrainData <- train_ub[,-31] 
+  TrainClasses <- train_ub[,31] 
+  rf.fcttrain <- train(TrainData, TrainClasses, method = "rf", trControl = trainControl(method = "cv"))
+  mtry_opt <- as.integer(rf.fcttrain$bestTune)
+  taux_erreur_ntree <- vector()
+  ntr <- c(1,seq(10,500,by=10))
+  for(j in ntr){
+    rf.datant <- randomForest(form, train_ub, mtry=mtry_opt, ntree=j)
+    rf.datant.pred <- predict(rf.datant,newdata=test)
+    txerreur <- mean(rf.datant.pred!=test$Class)
+    taux_erreur_ntree <- rbind(taux_erreur_ntree,txerreur)
+  }
+  ntree_opt <- ntr[which.min(taux_erreur_ntree)]
+  
+  #Optimisation du Gradient Boosting
+  xgb_model = train(TrainData, TrainClasses, trControl = trainControl(method = "cv"), method = "xgbTree")
+  best_gb=xgb_model$bestTune
+  
+  TrainData=as.matrix(TrainData)
+  TrainClasses=as.matrix(TrainClasses)
+  boost.fit <- xgboost(data=TrainData,label=TrainClasses, eta=best_gb[[3]],nrounds=best_gb[[1]], max_depth=best_gb[[2]],
+                       colsample_bytree=best_gb[[5]],subsample=best_gb[[7]],min_child_weight=best_gb[[6]],gamma=best_gb[[4]],verbose=0)
+  boost.pred <- predict(boost.fit, newdata=as.matrix(test[,-31]))
+  prediction <- as.numeric(boost.pred > 0.5)
+  boost.pred.class <- factor(ifelse(boost.pred>0.5, 1,0))
+  err_gb=mean(boost.pred.class!=test$Class)
+  shrinkage_opt=best_gb[[3]]
+  max_prof_opt=best_gb[[2]]
+  
+  #Optimisation du SVM
+  train.X=train_ub[,-31]
+  train.Y=train_ub[,31]
+  SVM.tune <- tune(svm,train.X,train.Y,kernel="linear", ranges=list(cost=2^(-3:3), gamma=2^(-2:2)))
+  cost_opt=SVM.tune$best.parameters[[1]]
+  gamma_opt=SVM.tune$best.parameters[[2]]  
+  
+  
+  #### AJOUT COMMIT OPTIMISATION ####
+  
   output$pre <- renderText({
     paste( "<br> <br> Dans le cadre de notre cursus universitaire, nous avons mis en place un démonstrateur sous R Shiny afin de montrer l'implémentation 
            et les performances des machines à vecteurs de support dans la détection des transactions frauduleuses commises sur les cartes de crédit.<br> <br>
