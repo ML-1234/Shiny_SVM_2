@@ -281,8 +281,7 @@ shinyServer(function(input, output) {
   output$confusion_RL <- renderPlot({
     draw_confusion_matrix(cmrl(), cols[2])
   })
-  
-  ####← AJOUT RANDOM FOREST ####
+
   
   # RandomForest
   ## Modèle et matrice simple
@@ -306,7 +305,28 @@ shinyServer(function(input, output) {
     paste( "L'erreur est de", taux_erreur,".")
   })
   
-  ####← AJOUT RANDOM FOREST ####
+  #### AJOUT GRADIENT BOOSTING ####
+  
+  # Gradient Boosting
+  ##Modèle
+  boost.fit <- reactive({xgboost(data=TrainData,label=TrainClasses, eta=input$skrinkage, max_depth=input$max_prof,verbose=0)})
+  
+  boost.pred <- reactive({predict(boost.fit(), newdata=as.matrix(test[,-31]))})
+  
+  cmgb <- reactive({
+    boost.pred.class <- factor(ifelse(boost.pred()>0.5, 1,0))
+    test$Class <- as.factor(test$Class)
+    train_ub$Class <- as.factor(train_ub$Class)
+    confusionMatrix(test$Class, boost.pred.class)})
+  
+  # #Texte optimal
+  # output$optimal_gb <- renderText(
+  #   paste( "Les paramètres optimaux qui permettent de minimiser le taux d'erreur sont de", max_prof_opt, "pour la profondeur maximale de l'arbre et de",shrinkage_opt, "pour le paramètre de lissage. <br> <br>")
+  # )
+  ##Matrice de confusion
+  output$m_gb <- renderPlot({draw_confusion_matrix(cmgb(), cols[5])})
+  
+  #### AJOUT GRADIENT BOOSTING ####
   
   
   output$p1 <- renderText({paste("\n", "&nbsp; &nbsp; Dans la base de données <em> creditcard </em>, les cas de défaut ne représentent que <strong> 0.1727486% </strong> des observations.
