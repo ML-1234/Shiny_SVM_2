@@ -305,7 +305,6 @@ shinyServer(function(input, output) {
     paste( "L'erreur est de", taux_erreur,".")
   })
   
-  #### AJOUT GRADIENT BOOSTING ####
   
   # Gradient Boosting
   ##Modèle
@@ -332,8 +331,55 @@ shinyServer(function(input, output) {
   ##Matrice de confusion
   output$m_gb <- renderPlot({draw_confusion_matrix(cmgb(), cols[5])})
   
-  #### AJOUT GRADIENT BOOSTING ####
-  
+  #### AJOUT COMPARAISON : ROC ####
+  #Courbe ROC
+  output$roc <-renderPlot({
+    
+    ##SVM
+    svm.fit.prob <-attr(svm.pred(),"probabilities")
+    ROCRpred_svm <- prediction(svm.fit.prob[,2], test$Class)
+    perf_svm <- ROCR::performance(ROCRpred_svm, 'tpr','fpr')
+    roc_svm.data <- data.frame(fpr=unlist(perf_svm@x.values),
+                               tpr=unlist(perf_svm@y.values), model="Support Vector Machine")
+    
+    ##Régression logistique
+    ROCRpred_glm <- prediction(glm.prob(), test$Class)
+    perf_glm <- ROCR::performance(ROCRpred_glm, 'tpr','fpr')
+    roc_glm.data <- data.frame(fpr=unlist(perf_glm@x.values),
+                               tpr=unlist(perf_glm@y.values), model="Régression logistique")
+    
+    ##Gradient Boosting
+    ROCRpred_gb <- prediction(boost.pred(), test$Class)
+    perf_gb <- ROCR::performance(ROCRpred_gb, 'tpr','fpr') 
+    roc_gb.data <- data.frame(fpr=unlist(perf_gb@x.values),
+                              tpr=unlist(perf_gb@y.values), model="Gradient Boosting")
+    
+    ##Random Forest 
+    train_ub$Class <- ifelse(train_ub$Class==1, 1,0)
+    test$Class <- ifelse(test$Class==1, 1,0)
+    rf.prob <- predict(rf.fit(),test,type="prob")
+    ROCRpred_rf <- prediction(rf.prob[,2], test$Class)
+    perf_rf <- ROCR::performance(ROCRpred_rf, 'tpr','fpr') 
+    roc_rf.data <- data.frame(fpr=unlist(perf_rf@x.values),
+                              tpr=unlist(perf_rf@y.values), model="Random Forest")
+    
+    ##Ensemble
+    ggplot() + 
+      geom_line(data = roc_glm.data, aes(x=fpr, y=tpr, colour = "Régression Logistique")) + 
+      geom_line(data = roc_rf.data, aes(x = fpr, y=tpr, colour = "Random Forest")) +
+      geom_line(data = roc_gb.data, aes(x = fpr, y=tpr, colour = "Gradient Boosting")) +
+      geom_line(data = roc_svm.data, aes(x = fpr, y=tpr, colour = "Support Vector Machine")) +
+      
+      geom_abline(color = "darkgrey", linetype=2) + theme_bw() + 
+      scale_colour_manual(name = "Modèles", values = cols) + 
+      xlab("Taux de Faux positifs") +
+      ylab("Taux de Vrais positifs") +
+      theme(legend.position = c(0.8, 0.2), 
+            legend.text = element_text(size = 15), 
+            legend.title = element_text(size = 15))
+    
+  })
+  #### AJOUT COMPARAISON : ROC ####
   
   output$p1 <- renderText({paste("\n", "&nbsp; &nbsp; Dans la base de données <em> creditcard </em>, les cas de défaut ne représentent que <strong> 0.1727486% </strong> des observations.
                                        Nos données sont donc largement asymétriques, comme nous le montre le graphique suivant,
