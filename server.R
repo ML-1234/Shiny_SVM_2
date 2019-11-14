@@ -310,26 +310,12 @@ shinyServer(function(input, output) {
   # Gradient Boosting
   ##Modèle
   boost.fit <- reactive({
+
     
-    TrainData <- train_ub[,-31] 
-    TrainClasses <- train_ub[,31] 
-    #Optimisation du Gradient Boosting
-    xgb_model <- train(TrainData, TrainClasses, trControl = trainControl(method = "cv"), method = "xgbTree")
-    best_gb=xgb_model$bestTune
+    TrainData <- as.matrix(train_ub[,-31] )
+    TrainClasses <- as.matrix(train_ub[,31])
     
-    TrainData <- as.matrix(TrainData)
-    TrainClasses <- as.matrix(TrainClasses)
-    boost.fit <- xgboost(data=TrainData,label=TrainClasses, eta=best_gb[[3]],nrounds=best_gb[[1]], max_depth=best_gb[[2]],
-                         colsample_bytree=best_gb[[5]],subsample=best_gb[[7]],min_child_weight=best_gb[[6]],gamma=best_gb[[4]],verbose=0)
-    boost.pred <- predict(boost.fit, newdata=as.matrix(test[,-31]))
-    prediction <- as.numeric(boost.pred > 0.5)
-    boost.pred.class <- factor(ifelse(boost.pred>0.5, 1,0))
-    err_gb <- mean(boost.pred.class!=test$Class)
-    shrinkage_opt <- best_gb[[3]]
-    max_prof_opt <- best_gb[[2]]
-    
-    xgboost(data=TrainData,label=TrainClasses, eta=input$skrinkage,nrounds=best_gb[[1]], max_depth=input$max_prof,
-            colsample_bytree=best_gb[[5]],subsample=best_gb[[7]],min_child_weight=best_gb[[6]],gamma=best_gb[[4]],verbose=0)})
+    xgboost(data=TrainData,label=TrainClasses, eta=input$skrinkage, nrounds=50, max_depth=input$max_prof,verbose=0)})
   
   boost.pred <- reactive({predict(boost.fit(), newdata=as.matrix(test[,-31]))})
   
