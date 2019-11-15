@@ -324,15 +324,17 @@ shinyServer(function(input, output) {
     train_ub$Class <- as.factor(train_ub$Class)
     confusionMatrix(boost.pred.class, test$Class)})
   
-  # #Texte optimal
-  # output$optimal_gb <- renderText(
-  #   paste( "Les paramètres optimaux qui permettent de minimiser le taux d'erreur sont de", max_prof_opt, "pour la profondeur maximale de l'arbre et de",shrinkage_opt, "pour le paramètre de lissage. <br> <br>")
-  # )
+
   ##Matrice de confusion
   output$m_gb <- renderPlot({draw_confusion_matrix(cmgb(), cols[5])})
   
-  #### AJOUT COMPARAISON : ROC ####
-  #Courbe ROC
+  
+  
+  
+  
+  ## ---- Comparaison des modèles ---- ##
+  # ---- Courbes ROC ---- #
+  
   output$roc <-renderPlot({
     
     ##SVM
@@ -379,7 +381,49 @@ shinyServer(function(input, output) {
             legend.title = element_text(size = 15))
     
   })
-  #### AJOUT COMPARAISON : ROC ####
+  
+  
+  # ---- Tableau Comparaison---- #
+  
+  output$ma_table <- renderTable({
+    #Régression logistique
+    ROCRpred_glm <- prediction(glm.prob(), test$Class)
+    AUC_glm <- ROCR::performance(ROCRpred_glm, 'auc')
+    AUC_glm <- paste(round(unlist(AUC_glm@y.values)*100, 3),"%")
+    
+    #Random Forest
+    train_ub$Class <- ifelse(train_ub$Class==1, 1,0)
+    test$Class <- ifelse(test$Class==1, 1,0)
+    rf.prob <- predict(rf.fit(),test,type="prob")
+    ROCRpred_rf <- prediction(rf.prob[,2], test$Class)
+    AUC_rf <- ROCR::performance(ROCRpred_rf, measure='auc')
+    AUC_rf <- paste(round(unlist(AUC_rf@y.values)*100, 3),"%")
+    
+    #SVM
+    svm.fit.prob <-attr(svm.pred(),"probabilities")
+    ROCRpred_svm <- prediction(svm.fit.prob[,2], test$Class)
+    AUC_svm <- ROCR::performance(ROCRpred_svm,'auc')
+    AUC_svm <- paste(round(unlist(AUC_svm@y.values)*100, 3),"%")
+    
+    #Gradient Boosting
+    ROCRpred_gb <- prediction(boost.pred(), test$Class)
+    AUC_gb <- ROCR::performance(ROCRpred_gb, 'auc')
+    AUC_gb <- paste(round(unlist(AUC_gb@y.values)*100, 3),"%")
+    
+    
+    
+    df <- data.frame(SVM=c(erreur(cmsvm()),AUC_svm), RL=c(erreur(cmrl()),AUC_glm), GB=c(erreur(cmgb()),AUC_gb), RF=c(erreur(cmrf()),AUC_rf))
+    rownames(df)<-c("Taux d'erreur", "AUC")
+    colnames(df) <- c("Support Vector Machine","Régression Logistique","Gradient Boosting","Random Forest")
+    df
+    
+    
+  },digits=4, striped = TRUE, bordered = TRUE, rownames=TRUE,width=600) 
+  
+  
+  
+  
+  ## ---- Traitement des données---- ##
   
   output$p1 <- renderText({paste("<p>&nbsp; &nbsp; Dans la base de données <em> creditcard</em>, les transactions frauduleuses ne représentent que <strong> 0.1727486% </strong> des observations.
                                        Nos données sont donc largement asymétriques, comme nous le montre le graphique suivant,
