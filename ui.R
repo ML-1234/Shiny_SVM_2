@@ -124,9 +124,13 @@ shinyUI(fluidPage(theme = shinytheme("flatly"),
                                                    
                                                    mainPanel(
                                                      HTML("Comme nous l'avons vu précédemment, les techniques SVM (non linéaires) font appel à une fonction implicite transformant l’espace d’entrée.
-                                                     La méthode requiert donc de sélectionner un noyau dont vous avez le choix. <br> <br>
-                                                     En réalisant les transformations de variables adéquates, on peut ainsi rendre linéairement séparable un problème qui ne l’est pas dans l’espace initial. 
-                                                     Il faut pénaliser les erreurs grâce au coût de pénalisation, plus ou moins fortement selon que l’on veuille plus ou moins coïncider aux données d’apprentissage."),
+                                                     La méthode requiert donc de sélectionner un noyau. <br> <br>
+                                                     En réalisant les transformations de variables adéquates, on peut ainsi rendre linéairement séparable un problème qui ne l’est pas dans l’espace initial. <br> <br>
+                                                     <ul>
+                                                     <li> <strong> Noyau :</strong> aide à projeter des données dans un espace dimensionnel supérieur où les points peuvent être séparés linéairement.</li>
+                                                     <li> <strong> Coût de pénalisation :</strong> permet de pénaliser les erreurs plus ou moins fortement selon que l’on veuille plus ou moins coïncider aux données d’apprentissage. </li>
+                                                     </ul>
+                                                     "),
                                                     
                                                      htmlOutput("optimal_svm"),
                                                      div(plotOutput("m_svm", height = 400, width = 500), align="center")
@@ -150,13 +154,17 @@ shinyUI(fluidPage(theme = shinytheme("flatly"),
                                                  sidebarLayout(
                                                    sidebarPanel(
                                                      helpText("Choisissez vos paramètres :"),
-                                                     sliderInput("mtry","Nombre de feuilles finales",min=0, max=30, value=15), 
+                                                     sliderInput("mtry","Nombre de variables sélectionnées",min=0, max=30, value=15), 
                                                      sliderInput("ntree","Nombre d'arbres dans la forêt",min=0, max=500, value=250),
                                                      submitButton("Mise à jour")
                                                    ),
                                                    mainPanel(
-                                                     "La forêt aléatoire (ou Random Forest) est constituée d'un grand nombre d'arbres de décision individuels qui sont construits sur des échantillons différents.
-                                                     Chaque arbre individuel de la forêt prévoit le non-défaut ou le défaut (0 ou 1) et la classe majoritaire devient la prédiction de notre modèle.",
+                                                     HTML("La forêt aléatoire (ou Random Forest) est constituée d'un grand nombre d'arbres de décision individuels qui sont construits sur des échantillons différents.
+                                                     Chaque arbre individuel de la forêt prévoit le non-défaut ou le défaut (0 ou 1) et la classe majoritaire devient la prédiction de notre modèle. <br> <br>
+                                                     <ul>
+                                                     <li> <strong> Nombre de variables sélectionnées :</strong> les variables sont sélectionnées aléatoirement parmi les variables explicatives pour construire chaque arbre. </li>
+                                                     <li> <strong> Nombre d’arbres dans la forêt :</strong> plus le nombre d’arbres sera grand, et plus votre prédiction sera robuste.</li>
+                                                     </ul> "),
                                                      
                                                      htmlOutput("optimal"),
                                                      htmlOutput("selected_param"),
@@ -177,7 +185,11 @@ shinyUI(fluidPage(theme = shinytheme("flatly"),
                                                      Dans la construction des modèles, le Boosting commence par construire un premier modèle qu’il va évaluer. 
                                                      A partir de cette mesure, chaque individu va être pondéré en fonction de la performance de la prédiction. <br> 
                                                      L’objectif est de donner un poids plus important aux individus pour lesquels la valeur a été mal prédite pour la construction du modèle suivant. 
-                                                     Le fait de corriger les poids au fur et à mesure permet de mieux prédire les valeurs difficiles. <br> <br>"),
+                                                     Le fait de corriger les poids au fur et à mesure permet de mieux prédire les valeurs difficiles. <br> <br>
+                                                    <ul>
+                                                     <li> <strong> Profondeur maximale de l’arbre :</strong> si l’arbre est petit il sera résistant au sur-apprentissage, mais on aura un danger de sous-apprentissage.  Inversement, si l’arbre est grand. </li>
+                                                     <li> <strong> Paramètre de lissage (shrinkage) : </strong> s'’il est trop faible, on aura une lenteur de convergence car les corrections seront timides. S’il est trop élevé,  on a des oscillations et donc sur-apprentissage. Bonne valeur usuelle autour de 0.1.</li>
+                                                     </ul> "),
                                                      
                                                     div(plotOutput("m_gb", height = 400, width = 500), align="center"),
                                                      htmlOutput("optimal_gb")

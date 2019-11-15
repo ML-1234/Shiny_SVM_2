@@ -375,7 +375,7 @@ shinyServer(function(input, output) {
   cmrf <- reactive({confusionMatrix(rf.pred(), test$Class)})
   
   output$selected_param <- renderText({ 
-    paste( "Vous avez choisi le nombre de feuilles égales à", input$mtry, "et un nombre d'arbres égal à", input$ntree,". <br> <br>")
+    paste( "Vous avez choisi un nombre de feuilles égal à", input$mtry, "et un nombre d'arbres égal à", input$ntree,". <br> <br>")
   })
   
   #Matrice de confusion
