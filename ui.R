@@ -187,8 +187,8 @@ shinyUI(fluidPage(theme = shinytheme("flatly"),
                                                      L’objectif est de donner un poids plus important aux individus pour lesquels la valeur a été mal prédite pour la construction du modèle suivant. 
                                                      Le fait de corriger les poids au fur et à mesure permet de mieux prédire les valeurs difficiles. <br> <br>
                                                     <ul>
-                                                     <li> <strong> Profondeur maximale de l’arbre :</strong> si l’arbre est petit il sera résistant au sur-apprentissage, mais on aura un danger de sous-apprentissage.  Inversement, si l’arbre est grand. </li>
-                                                     <li> <strong> Paramètre de lissage (shrinkage) : </strong> s'’il est trop faible, on aura une lenteur de convergence car les corrections seront timides. S’il est trop élevé,  on a des oscillations et donc sur-apprentissage. Bonne valeur usuelle autour de 0.1.</li>
+                                                     <li> <strong> Profondeur maximale de l’arbre :</strong> si l’arbre est petit il sera résistant au sur-apprentissage, mais on aura un danger de sous-apprentissage.  Inversement si l’arbre est grand. </li>
+                                                     <li> <strong> Paramètre de lissage (shrinkage) : </strong> s'il est trop faible, on aura une lenteur de convergence car les corrections seront timides. S’il est trop élevé,  on a des oscillations et donc sur-apprentissage. Bonne valeur usuelle autour de 0.1.</li>
                                                      </ul> "),
                                                      
                                                     div(plotOutput("m_gb", height = 400, width = 500), align="center"),
