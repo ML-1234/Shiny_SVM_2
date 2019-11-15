@@ -82,25 +82,34 @@ shinyUI(fluidPage(theme = shinytheme("flatly"),
                                       tabsetPanel(
                                         tabPanel("Principe",
                                                  absolutePanel(
-                                                   htmlOutput("intro",align="justify",width=500,height = 400),
-                                                   h4(em("CAS LINEAIREMENT SEPARABLE"),align="center"),
-                                                   htmlOutput("intro2",align="justify",width=500,height = 400),
+                                                   div(htmlOutput("intro"), align="justify"),
                                                    
+                                                   
+                                                   h4(em("CAS LINEAIREMENT SEPARABLE"),align="center"),
+                                                  
+                                                   div(htmlOutput("intro2"), align="justify"),
                                                    div(plotOutput("plot_linear", height = 300, width = 400), align="center"),
                                                    
-                                                   htmlOutput("vs",align="justify",width=500,height = 400),
+                                                   div(htmlOutput("vs"), align="justify"),
                                                    div(plotOutput("plot_linear_SVM", height = 300, width = 400),align="center"),
                                                    
-                                                   htmlOutput("cout",align="justify",width=500,height = 400),
+                                                   div(htmlOutput("cout"), align="justify"),
+                                                   
+                                                   
                                                    h4(em("CAS PRESQUE LINEAIREMENT SEPARABLE"),align="center"),
-                                                   htmlOutput("cout2",align="justify",width=500,height = 400),
+                                                   
+                                                   div(htmlOutput("cout2"), align="justify"),
                                                    div(plotOutput("plot_almostlinear_SVM", height = 300, width = 400), align="center"),
                                                    
-                                                   htmlOutput("vr",align="justify",width=500,height = 400),
+                                                   div(htmlOutput("vr"), align="justify"),
+                                                   
                                                    h4(em("CAS NON LINEAIREMENT SEPARABLE"),align="center"),
-                                                   htmlOutput("vr2",align="justify",width=500,height = 400),
+                                                   
+                                                   div(htmlOutput("vr2"), align="justify"),
                                                    div(plotOutput("plot_radial_SVM", height = 300, width = 400), align="center"),
-                                                   htmlOutput("fin",align="justify",width=500,height = 400),
+                                                   
+                                                   div(htmlOutput("fin"), align="justify"),
+                                                   
                                                    left="20%", right = "20%")
                                         ),
                                         tabPanel("Démonstration et Comparaison",

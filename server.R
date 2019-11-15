@@ -210,19 +210,14 @@ shinyServer(function(input, output) {
   ## --- Principe --- ##
   
   output$intro <- renderText({
-    paste( " <br> <br>
-           Les <b>Support Vector Machines</b> (SVM) représentent une méthode statistique développée dans les années 1990.<br> 
-           Cette méthode est destinée à résoudre des problèmes de classification puisqu’elle va permettre de déterminer si un élément appartient ou non à une classe.
-           <br> <br>")
+    paste( "<p>&nbsp;&nbsp;&nbsp;Les <b>Support Vector Machines</b> (SVM) représentent une méthode statistique développée dans les années 1990.</p>",
+           "<p>&nbsp;&nbsp;Cette méthode est destinée à résoudre des problèmes de classification puisqu’elle va permettre de déterminer si un élément appartient ou non à une classe.</p>")
   })
   
   output$intro2 <- renderText({
-    paste( "<br> <br> Pour mieux comprendre son fonctionnement, il est utile de s’intéresser à sa représentation graphique.
-           Pour cela, on dispose d’un ensemble de données. <br>
-           Notre but va être de chercher à les séparer en deux groupes distincts. <br>
-           Un groupe représente ainsi la survenance de l’évènement (prévision 1) et l’autre la non-survenance (prévision 0). <br>
-           Cette séparation linéaire va se faire à l’aide d’une frontière appelée <b>hyperplan</b>. <br> <br>
-           ")
+    paste( "<p>&nbsp;&nbsp;Pour mieux comprendre son fonctionnement, il est utile de s’intéresser à sa représentation graphique.
+           Pour cela, on dispose d’un ensemble de données. Notre but va être de chercher à les séparer en deux groupes distincts.</p>",
+           "<p>&nbsp;&nbsp;Un groupe représente ainsi la survenance de l’évènement (prévision 1) et l’autre la non-survenance (prévision 0). Cette séparation linéaire va se faire à l’aide d’une frontière appelée <b>hyperplan</b>.</p>")
   })
   
   
@@ -248,12 +243,12 @@ shinyServer(function(input, output) {
   })
   
   output$vs <- renderText({
-    paste( " <br> <br>Il existe de nombreux hyperplans séparateurs.
-           L’algorithme SVM va nous aider à trouver l'optimal, celui qui maximise la séparation en classant correctement toutes les observations. <br> 
-           Pour le trouver, il suffit de chercher l’hyperplan pour lequel la distance entre la frontière des deux groupes et l’observation la plus proche est maximale. <br>
+    paste( "<p>&nbsp;&nbsp;&nbsp;Il existe de nombreux hyperplans séparateurs.
+           L’algorithme SVM va nous aider à trouver l'optimal, celui qui maximise la séparation en classant correctement toutes les observations.
+           Pour le trouver, il suffit de chercher l’hyperplan pour lequel la distance entre la frontière des deux groupes et l’observation la plus proche est maximale.</p>",
            
-           Le double de cette distance est appelée <b>marge</b>. On parlera donc de maximisation de la marge. <br>
-           Il en résulte que les observations les plus proches de la frontière, appelées <b> vecteurs de supports </b>, sont les points situés sur la marge. <br> <br>")
+           "<p>&nbsp;&nbsp;Le double de cette distance est appelée <b>marge</b>. On parlera donc de maximisation de la marge.
+           Il en résulte que les observations les plus proches de la frontière, appelées <b> vecteurs de supports </b>, sont les points situés sur la marge.</p>")
   })
   
   output$plot_linear_SVM <- renderPlot({
@@ -272,12 +267,12 @@ shinyServer(function(input, output) {
   #Bdd presque linéairement séparable
   
   output$cout <- renderText({
-    paste( " <br> <br> Cependant, il arrive souvent que l’on soit face à des échantillons non linéairement séparables.
-           Dans cette situation, deux cas de figure apparaissent. <br> <br>")
+    paste( "<p>&nbsp;&nbsp;&nbsp;Cependant, il arrive souvent que l’on soit face à des échantillons non linéairement séparables.
+           Dans cette situation, deux cas de figure apparaissent.</p>")
   })
   
   output$cout2 <- renderText({
-    paste( " <br> Le premier est que la séparation optimale reste linéaire malgré le fait que quelques observations ne puissent pas être correctement classées. <br> <br>")
+    paste( "<p>&nbsp;&nbsp;Le premier est que la séparation optimale reste linéaire malgré le fait que quelques observations ne puissent pas être correctement classées.</p>")
   })
   
   output$plot_almostlinear_SVM <- renderPlot({
@@ -299,19 +294,19 @@ shinyServer(function(input, output) {
   })
   
   output$vr <- renderText({
-    paste( "<br> <br> Pour définir le nombre d'observations mal classées autorisé <b>(variable ressort)</b>, on fait appel à un <b>paramètre de pénalisation</b> qui est le <b>coût</b>.<br>
-           On l'utilise car les performances des SVMs y sont très sensibles. <br>
-           Ce paramètre permet l’acceptation d'un certain nombre de variables ressorts dans le but de maximiser la marge. <br>
+    paste( "<p>&nbsp;&nbsp;Pour définir le nombre d'observations mal classées autorisé <b>(variable ressort)</b>, on fait appel à un <b>paramètre de pénalisation</b> qui est le <b>coût</b>.<br>
+           On l'utilise car les performances des SVMs y sont très sensibles.
+           Ce paramètre permet l’acceptation d'un certain nombre de variables ressorts dans le but de maximiser la marge.</p>",
            
-           Cependant, il faut être prudent car lorsqu'on choisit un coût élevé, cela signifie que peu d’erreurs de classification sont acceptées et donc que la marge sera plus petite.
-           Dans ce cas, on fait face à un risque de <b>sur-apprentissage</b>. <br>
+           "<p>&nbsp;&nbsp;Cependant, il faut être prudent car lorsqu'on choisit un coût élevé, cela signifie que peu d’erreurs de classification sont acceptées et donc que la marge sera plus petite.
+           Dans ce cas, on fait face à un risque de <b>sur-apprentissage</b>.
            Dans la situation inverse, lorsque le coût est faible, la priorité est donnée à la maximisation de la marge, au préjudice de la minimisation du nombre d’erreurs de classification. 
-           On est alors face à un risque de <b>sous-apprentissage</b>.  <br>
-           L'objectif est alors de trouver un arbitrage entre l’optimisation de la marge et le nombre d'erreurs de classification. <br> <br> ")
+           On est alors face à un risque de <b>sous-apprentissage</b>.
+           L'objectif est alors de trouver un arbitrage entre l’optimisation de la marge et le nombre d'erreurs de classification.</p>")
   })
   
   output$vr2 <- renderText({
-    paste( "<br>  Le deuxième cas de figure apparaît lorsque l’échantillon n’est pas linéairement séparable. <br> <br>")
+    paste( "<p>&nbsp;&nbsp;Le deuxième cas de figure apparaît lorsque l’échantillon n’est pas linéairement séparable.</p>")
   })
   
   
@@ -334,11 +329,10 @@ shinyServer(function(input, output) {
     
   })
   output$fin <- renderText({
-    paste( "<br>  Ici on constate que la séparation linéaire n’est pas possible.<br> 
-           Afin de trouver la séparation optimale on va alors chercher à <b>transformer l’espace de représentation des données d’entrée</b> en un espace de plus grandes dimensions en rajoutant des variables explicatives créées à partir de la transformation des variables initiales.<br>
-           Cette transformation se fait à l’aide des <b>fonctions kernels</b>. Elles sont très utile puisque l’on n’a pas besoin de connaître la transformation à appliquer.<br>
-           Dans ce nouvel espace de plus grande dimension, il sera alors plus probable de trouver une séparation linéaire. <br> <br> <br>
-           ")
+    paste( "<p>&nbsp;&nbsp;&nbsp;Ici on constate que la séparation linéaire n’est pas possible.
+           Afin de trouver la séparation optimale on va alors chercher à <b>transformer l’espace de représentation des données d’entrée</b> en un espace de plus grandes dimensions en rajoutant des variables explicatives créées à partir de la transformation des variables initiales.</p>",
+           "<p>&nbsp;&nbsp;Cette transformation se fait à l’aide des <b>fonctions kernels</b>. Elles sont très utile puisque l’on n’a pas besoin de connaître la transformation à appliquer.
+           Dans ce nouvel espace de plus grande dimension, il sera alors plus probable de trouver une séparation linéaire.</p>")
     
   })
   
