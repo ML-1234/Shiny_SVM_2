@@ -260,7 +260,7 @@ shinyServer(function(input, output) {
   svm.pred <- reactive({predict(svm.fit(), test, probability=TRUE)})
   
   cmsvm <- reactive({pred <- svm.pred()
-  confusionMatrix(test$Class, pred)})
+  confusionMatrix(pred, test$Class)})
   
   ##Matrice de confusion
   output$m_svm <- renderPlot({
@@ -322,7 +322,7 @@ shinyServer(function(input, output) {
     boost.pred.class <- factor(ifelse(boost.pred()>0.5, 1,0))
     test$Class <- as.factor(test$Class)
     train_ub$Class <- as.factor(train_ub$Class)
-    confusionMatrix(test$Class, boost.pred.class)})
+    confusionMatrix(boost.pred.class, test$Class)})
   
   # #Texte optimal
   # output$optimal_gb <- renderText(
@@ -380,69 +380,33 @@ shinyServer(function(input, output) {
     
   })
   #### AJOUT COMPARAISON : ROC ####
-  output$ma_table <- renderTable({
-    #Régression logistique
-    ROCRpred_glm <- prediction(glm.prob(), test$Class)
-    AUC_glm <- ROCR::performance(ROCRpred_glm, 'auc')
-    AUC_glm <- paste(round(unlist(AUC_glm@y.values)*100, 3),"%")
-    
-    #Random Forest
-    train_ub$Class <- ifelse(train_ub$Class==1, 1,0)
-    test$Class <- ifelse(test$Class==1, 1,0)
-    rf.prob <- predict(rf.fit(),test,type="prob")
-    ROCRpred_rf <- prediction(rf.prob[,2], test$Class)
-    AUC_rf <- ROCR::performance(ROCRpred_rf, measure='auc')
-    AUC_rf <- paste(round(unlist(AUC_rf@y.values)*100, 3),"%")
-    
-    #SVM
-    svm.fit.prob <-attr(svm.pred(),"probabilities")
-    ROCRpred_svm <- prediction(svm.fit.prob[,2], test$Class)
-    AUC_svm <- ROCR::performance(ROCRpred_svm,'auc')
-    AUC_svm <- paste(round(unlist(AUC_svm@y.values)*100, 3),"%")
-    
-    #Gradient Boosting
-    ROCRpred_gb <- prediction(boost.pred(), test$Class)
-    AUC_gb <- ROCR::performance(ROCRpred_gb, 'auc')
-    AUC_gb <- paste(round(unlist(AUC_gb@y.values)*100, 3),"%")
-    
-    
-    
-    df <- data.frame(SVM=c(erreur(cmsvm()),AUC_svm), RL=c(erreur(cmrl()),AUC_glm), GB=c(erreur(cmgb()),AUC_gb), RF=c(erreur(cmrf()),AUC_rf))
-    rownames(df)<-c("Taux d'erreur", "AUC")
-    colnames(df) <- c("Support Vector Machine","Régression Logistique","Gradient Boosting","Random Forest")
-    df
-    
-    
-  },digits=4, striped = TRUE, bordered = TRUE, rownames=TRUE,width=600) 
   
-  output$p1 <- renderText({paste("\n", "&nbsp; &nbsp; Dans la base de données <em> creditcard </em>, les cas de défaut ne représentent que <strong> 0.1727486% </strong> des observations.
+  output$p1 <- renderText({paste("<p>&nbsp; &nbsp; Dans la base de données <em> creditcard</em>, les transactions frauduleuses ne représentent que <strong> 0.1727486% </strong> des observations.
                                        Nos données sont donc largement asymétriques, comme nous le montre le graphique suivant,
-                                       dans lequel la colonne des cas de défaut est presque invisible.", "\n","\n",
-                                 sep="<br/>")})
+                                       dans lequel la colonne des transactions frauduleuses est presque invisible.</p>")})
   
   
   output$g1 <- renderPlot({ggplot(bdd, aes(Class)) + geom_bar(fill = c("#0073C2FF","#ffa500")) +
       labs(x = " ", y = " ") + 
-      scale_x_discrete(labels=c("Non-défaut", "Défaut")) +
+      scale_x_discrete(labels=c("Non-Frauduleuses", "Frauduleuses")) +
       theme(plot.title = element_text(hjust = 0.5, size = 20, face = "italic"))})
   
   
-  output$p2a <- renderText({paste("\n", "&nbsp; &nbsp; Lors de la modélisation, l’asymétrie des données peut fausser le résultat. 
+  output$p2a <- renderText({paste("<p>&nbsp;&nbsp;&nbsp;Lors de la modélisation, l’asymétrie des données peut fausser le résultat. 
                                                      En effet, la classification repose sur un mécanisme de minimisation du taux d’erreur et sur une hypothèse de bonne 
                                                      représentation de la population, mais le manque d’observations de la classe minoritaire ne donne pas assez d’informations au modèle
-                                                     pour bien apprendre de ces données.",
-                                  "\n","&nbsp; &nbsp; Ainsi, il pourra avoir un très bon taux d'exactitude en classant tous les individus dans la classe largement majoritaire.",
-                                  "\n","&nbsp; &nbsp; On aura donc à la fois un problème de représentativité de la population par l’échantillon et avec l’aspect minimiseur 
-                                               du taux d’erreur de l’algorithme du modèle en lui-même.",
-                                  "\n","&nbsp; &nbsp; Il se dessine alors deux méthodes de traitement des données asymétriques : changer l’algorithme ou rééquilibrer les données 
-                                               en utilisant des <strong> stratégies d’échantillonnage </strong>. C’est cette dernière technique que nous avons choisi de développer ici.",
-                                  "\n","Dans les stratégies d’échantillonnage, il existe deux manières de procéder :",
-                                  sep="<br/>")})
+                                                     pour bien apprendre de ces données.</p>",
+                                  "<p>&nbsp;&nbsp;&nbsp;Ainsi, il pourra avoir un très bon taux d'exactitude en classant tous les individus dans la classe largement majoritaire.</p>",
+                                  "<p>&nbsp;&nbsp;&nbsp;On aura donc à la fois un problème de représentativité de la population par l’échantillon et avec l’aspect minimiseur 
+                                               du taux d’erreur de l’algorithme du modèle en lui-même.</p>",
+                                  "<p>&nbsp;&nbsp;&nbsp;Il se dessine alors deux méthodes de traitement des données asymétriques : changer l’algorithme ou rééquilibrer les données 
+                                               en utilisant des <strong> stratégies d’échantillonnage </strong>. C’est cette dernière technique que nous avons choisi de développer ici.</p>",
+                                  "Dans les stratégies d’échantillonnage, il existe deux manières de procéder :")})
   
-  output$p2b <- renderText({paste("&nbsp;- Le <strong> sur-échantillonnage </strong> : consiste à augmenter le nombre d’observations de la classe minoritaire en créant 
-                                                         des observations artificielles.<br/>",
-                                  "&nbsp;- Le <strong> sous-échantillonnage </strong> : enlève des observations de la classe majoritaire. 
-                                                         Le choix des observations à supprimer peut se faire aléatoirement ou selon des critères spécifiques.")})
+  output$p2b <- renderText({paste("<ul> &nbsp;  <li> Le <strong> sur-échantillonnage </strong> : consiste à augmenter le nombre d’observations de la classe minoritaire en créant 
+                                                         des observations artificielles. </li>",
+                                  "&nbsp; <li> Le <strong> sous-échantillonnage </strong> : enlève des observations de la classe majoritaire. 
+                                                         Le choix des observations à supprimer peut se faire aléatoirement ou selon des critères spécifiques. </li> </ul>")})
   
   output$p2c <- renderText({paste("\n","&nbsp; &nbsp; En général, le sur-échantillonnage est préféré car il ne suppose pas la perte d’une partie des données, 
                                                mais le sous-apprentissage peut aussi aider lorsque l’échantillon est considéré trop large.",
@@ -456,16 +420,16 @@ shinyServer(function(input, output) {
                                  "\n", "&nbsp; &nbsp; Toujours dans l’objectif de garder une application la plus fluide possible, nous avons retenu la méthode de 
                                                      sous-échantillonnage la plus simple : le <strong> sous-échantillonnage aléatoire </strong>, qui retire aléatoirement des observations de la classe majoritaire.",
                                  "\n", "&nbsp; &nbsp; Afin de garder un nombre significatif d’observations ainsi que le caractère asymétrique de la base de données initiale 
-                                                     dans l’échantillon, nous avons arbitrairement choisi de d’augmenter à <strong> 8% </strong> la part de de cas de défaut dans l’échantillon d’apprentissage.", 
+                                                     dans l’échantillon, nous avons arbitrairement choisi de d’augmenter à <strong> 8% </strong> la part de transactions frauduleuses dans l’échantillon d’apprentissage.", 
                                  sep="<br/>")})
   
   
-  output$p4 <- renderText({paste("\n", "&nbsp; &nbsp; La nouvelle base a", nrow(train_ub), "observations dont", sum(train_ub$Class==1), "cas de défaut et",sum(train_ub$Class==0), "cas de non-défaut.",  "\n","\n")})
+  output$p4 <- renderText({paste("\n", "&nbsp; &nbsp; La nouvelle base comprend", nrow(train_ub), "observations dont", sum(train_ub$Class==1), "transactions frauduleuses et",sum(train_ub$Class==0), "transactions non-frauduleuses.",  "\n","\n")})
   
   
   output$g4 <- renderPlot({ggplot(train_ub, aes(Class)) + geom_bar(fill = c("#0073C2FF","#ffa500")) +
       labs(x = " ", y = " ") + 
-      scale_x_discrete(labels=c("Non-défaut", "Défaut")) +
+      scale_x_discrete(labels=c("Non-Frauduleuses", "Frauduleuses")) +
       theme(plot.title = element_text(hjust = 0.5, size = 20, face = "italic"))})
   
   

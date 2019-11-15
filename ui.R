@@ -41,7 +41,7 @@ shinyUI(fluidPage(theme = shinytheme("flatly"),
                                           div(plotOutput("g1", height=500, width=400), align="center"),
                                           
                                           div(htmlOutput("p2a"), align="justify"),
-                                          div(htmlOutput("p2b"), align="justify"),
+                                          div(htmlOutput("p2b"), align="left"),
                                           div(htmlOutput("p2c"), align="justify"),
                                           
                                           h2("Traitements appliqués"),
