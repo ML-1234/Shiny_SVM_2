@@ -140,11 +140,19 @@ shinyUI(fluidPage(theme = shinytheme("flatly"),
                                                  h1("Méthodes concurrentes"),
                                                  h3("Régression logistique"),
                                                  sidebarLayout(
-                                                   sidebarPanel(),
+                                                   sidebarPanel(
+                                                     helpText("Choisissez votre paramètre :"),
+                                                     numericInput("cutoff", label = "Cut-off", min=0.1,max=0.9,value=0.5,step=0.1),
+                                                     submitButton("Mise à jour")
+                                                   ),
                                                    
                                                    mainPanel(
                                                      HTML("La régression logitique permet de mesurer l’association entre la variable expliquée qualitative et les variables explicatives.
-                                                     Chacune des variables explicatives va être pondérée par son coefficient trouvé afin de donner au final la meilleure prédiction. <br> <br>"),
+                                                     Chacune des variables explicatives va être pondérée par son coefficient trouvé afin de donner au final la meilleure prédiction. <br> <br>
+                                                    <ul>
+                                                    <li> <strong> Cut-off :</strong> seuil qui va permettre de déterminer un équilibre entre le taux de faux positifs et le taux de faux négatifs. </li>
+                                                    </ul>
+                                                          "),
                                                      
                                                      div(plotOutput("confusion_RL", height = 400, width = 500), align="center")
                                                      

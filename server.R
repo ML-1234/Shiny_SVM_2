@@ -359,7 +359,7 @@ shinyServer(function(input, output) {
   glm.fit <- reactive({glm(form,data=train_ub,family="binomial")})
   glm.prob <- reactive({predict(glm.fit(), test, type="response")})
   
-  cmrl <- reactive({glm.pred <- factor(ifelse(glm.prob()>0.5, 1,0))
+  cmrl <- reactive({glm.pred <- factor(ifelse(glm.prob()>input$cutoff, 1,0))
   confusionMatrix(glm.pred, test$Class)})
   
   #Matrice de confusion
