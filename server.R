@@ -8,6 +8,7 @@ library(ggplot2)
 library(corrplot)
 library(ROCR)
 library(xgboost)
+library(DT)
 
 
 shinyServer(function(input, output) {
