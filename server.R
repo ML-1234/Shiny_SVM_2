@@ -103,10 +103,10 @@ shinyServer(function(input, output) {
   ### --- Préambule --- ###
   ## --- Présentation --- ##
   output$pre <- renderText({
-    paste( "<br> <br> Dans le cadre de notre cursus universitaire, nous avons mis en place un démonstrateur sous R Shiny afin de montrer l'implémentation 
+    paste( "<br><br>&nbsp;&nbsp;&nbsp;Dans le cadre de notre cursus universitaire, nous avons mis en place un démonstrateur sous R Shiny afin de montrer l'implémentation 
            et les performances des machines à vecteurs de support dans la détection des transactions frauduleuses commises sur les cartes de crédit.<br> <br>
-           Avant de commencer, il est important pour nous de remercier M. HURLIN, créateur de ce projet et professeur de SVM, M. DELSOL, professeur de R Shiny ainsi que  M. DUDEK pour son intervention sur le déploiement d'applications Shiny sous Github.<br> <br>
-           Dès à présent, afin de comprendre le fonctionnement de ce démonstrateur, nous vous invitons à télécharger la notice située dans l'onglet suivant.")
+           &nbsp;&nbsp;&nbsp;Avant de commencer, il est important pour nous de remercier M. HURLIN, créateur de ce projet et professeur de SVM, M. DELSOL, professeur de R Shiny ainsi que  M. DUDEK pour son intervention sur le déploiement d'applications Shiny sous Github.<br> <br>
+           &nbsp;&nbsp;&nbsp;Dès à présent, afin de comprendre le fonctionnement de ce démonstrateur, nous vous invitons à télécharger la notice située dans l'onglet suivant.")
   })
   
   ## --- Notice d'utilisation --- ##
@@ -132,9 +132,39 @@ shinyServer(function(input, output) {
   
   ## --- Présentation des données --- ##
   
+  
+  output$sum <- renderPrint({summary(bdd[,as.numeric(input$var)])})
+  
+  output$dist <- renderPlot({
+    x<-summary(bdd[,as.numeric(input$var)])
+    boxplot(x,horizontal=TRUE,col="brown",main=names(bdd[,as.numeric(input$var)]))
+  })
+  
+  output$cor <- renderPlot({
+    bdd_corr <- as.data.frame(lapply(bdd, as.numeric))
+    bdd_M <-cor(bdd_corr)
+    p.mat <- cor.mtest(bdd_corr)
+    
+    corrplot(bdd_M, type="upper", p.mat = p.mat, sig.level = 0.05)
+  })
+  
+  output$pa1 <- renderText({paste("\n<br/><p>&nbsp;&nbsp;&nbsp;Afin de pouvoir mettre en application la méthode des SVM, nous avons utilisé le base données mise « Credit Card Fraud Detection », téléchargeable sur le site Kaggle à l’adresse suivante :", a("Credit Card Fraud Detection", href="https://www.kaggle.com/mlg-ulb/creditcardfraud"), ".</p>")})
+  
+  output$pa2 <- renderText({paste("<p>&nbsp;&nbsp;&nbsp;Cette base de données contient deux jours de transactions effectuées par des cartes de crédit européennes et Septembre 2013, période au cours de laquelle 492 cas de fraudes ont été répertoriés, pour 284 807 transactions.</p>")})
+  
+  output$pa3 <- renderText({paste("<p>&nbsp;&nbsp;&nbsp;L’objectif de la modélisation de cette base de données est d’identifier les transactions frauduleuses à l’aide de la variable cible binaire nommée <strong>Class</strong>, valant 1 en cas de fraude et 0 sinon.</p>")})
+  
+  output$pa4 <- renderText({paste("\n<br/><p>Notre jeu d’entrée est composé de 30 prédicteurs, tous numériques : </p>", 
+                                  "<ul><li><strong>V1, V2, …, V28</strong> ont été anonymisées pour des raisons de confidentialités et ont reçu une transformation ACP (Analyse en composantes principales).</li>
+                                  <li><strong>Time</strong> exprime le temps en secondes entre chaque transaction et la première transaction de la base de données.</li>
+                                  <li><strong>Amount</strong> nous donne le montant de chaque transaction.</li></ul>", "<br/>")})
+  
+  output$table <- DT::renderDataTable({
+    DT::datatable(bdd, options = list(scrollX=TRUE, scrollCollapse=TRUE))}) 
+  
   ## --- Traitement des données --- ##
   
-  output$p1 <- renderText({paste("<p>&nbsp; &nbsp; Dans la base de données <em> creditcard</em>, les transactions frauduleuses ne représentent que <strong> 0.1727486% </strong> des observations.
+  output$p1 <- renderText({paste("\n<br/><p>&nbsp;&nbsp;&nbsp;Dans la base de données <em> creditcard</em>, les transactions frauduleuses ne représentent que <strong> 0.1727486% </strong> des observations.
                                        Nos données sont donc largement asymétriques, comme nous le montre le graphique suivant,
                                        dans lequel la colonne des transactions frauduleuses est presque invisible.</p>")})
   
@@ -156,42 +186,34 @@ shinyServer(function(input, output) {
                                                en utilisant des <strong> stratégies d’échantillonnage </strong>. C’est cette dernière technique que nous avons choisi de développer ici.</p>",
                                   "Dans les stratégies d’échantillonnage, il existe deux manières de procéder :")})
   
-  output$p2b <- renderText({paste("<ul> &nbsp;  <li> Le <strong> sur-échantillonnage </strong> : consiste à augmenter le nombre d’observations de la classe minoritaire en créant 
-                                                         des observations artificielles. </li>",
-                                  "&nbsp; <li> Le <strong> sous-échantillonnage </strong> : enlève des observations de la classe majoritaire. 
+  output$p2b <- renderText({paste("\n<br/><ul><li> Le <strong> sur-échantillonnage </strong> : consiste à augmenter le nombre d’observations de la classe minoritaire en créant 
+                                                         des observations artificielles. </li>
+                                  <li> Le <strong> sous-échantillonnage </strong> : enlève des observations de la classe majoritaire. 
                                                          Le choix des observations à supprimer peut se faire aléatoirement ou selon des critères spécifiques. </li> </ul>")})
   
-  output$p2c <- renderText({paste("\n","&nbsp; &nbsp; En général, le sur-échantillonnage est préféré car il ne suppose pas la perte d’une partie des données, 
+  output$p2c <- renderText({paste("<br/>&nbsp;&nbsp;&nbsp;En général, le sur-échantillonnage est préféré car il ne suppose pas la perte d’une partie des données, 
                                                mais le sous-apprentissage peut aussi aider lorsque l’échantillon est considéré trop large.",
-                                  "\n","&nbsp; &nbsp; Afin de ne pas surmener l’application Shiny, nous avons préféré appliquer la méthode de sous-échantillonnage, 
-                                               et garder ainsi un échantillon d’apprentissage avec moins d’observations.", 
-                                  sep="<br/>")})
+                                  "\n<br/>&nbsp;&nbsp;&nbsp;Afin de ne pas surmener l’application Shiny, nous avons préféré appliquer la méthode de sous-échantillonnage, 
+                                               et garder ainsi un échantillon d’apprentissage avec moins d’observations.")})
   
   
-  output$p3 <- renderText({paste("\n", "&nbsp; &nbsp; Avant d’appliquer un quelconque traitement sur nos données, nous avons extrait de la base de données un <strong> échantillon 
+  output$p3 <- renderText({paste("\n", "&nbsp;&nbsp;&nbsp;Avant d’appliquer un quelconque traitement sur nos données, nous avons extrait de la base de données un <strong> échantillon 
                                                      de validation </strong>, afin de pouvoir vérifier la classification sur un échantillon qui a gardé l’asymétrie d’origine. ",
-                                 "\n", "&nbsp; &nbsp; Toujours dans l’objectif de garder une application la plus fluide possible, nous avons retenu la méthode de 
+                                 "\n", "&nbsp;&nbsp;&nbsp;Toujours dans l’objectif de garder une application la plus fluide possible, nous avons retenu la méthode de 
                                                      sous-échantillonnage la plus simple : le <strong> sous-échantillonnage aléatoire </strong>, qui retire aléatoirement des observations de la classe majoritaire.",
-                                 "\n", "&nbsp; &nbsp; Afin de garder un nombre significatif d’observations ainsi que le caractère asymétrique de la base de données initiale 
+                                 "\n", "&nbsp;&nbsp;&nbsp;Afin de garder un nombre significatif d’observations ainsi que le caractère asymétrique de la base de données initiale 
                                                      dans l’échantillon, nous avons arbitrairement choisi de d’augmenter à <strong> 8% </strong> la part de transactions frauduleuses dans l’échantillon d’apprentissage.", 
                                  sep="<br/>")})
   
   
-  output$p4 <- renderText({paste("\n", "&nbsp; &nbsp; La nouvelle base comprend", nrow(train_ub), "observations dont", sum(train_ub$Class==1), "transactions frauduleuses et",sum(train_ub$Class==0), "transactions non-frauduleuses.",  "\n","\n")})
+  output$p4 <- renderText({paste("\n<br/>&nbsp;&nbsp;&nbsp;La nouvelle base comprend", nrow(train_ub), "observations dont", sum(train_ub$Class==1), "transactions frauduleuses et",sum(train_ub$Class==0), "transactions non-frauduleuses.",  "\n","\n")})
   
   
   output$g4 <- renderPlot({ggplot(train_ub, aes(Class)) + geom_bar(fill = c("#0073C2FF","#ffa500")) +
       labs(x = " ", y = " ") + 
       scale_x_discrete(labels=c("Non-Frauduleuses", "Frauduleuses")) +
       theme(plot.title = element_text(hjust = 0.5, size = 20, face = "italic"))})
-  
-  
-  output$sum2 <- renderPrint({summary(train_ub[,as.numeric(input$var2)])})
-  
-  output$box2 <- renderPlot({
-    x<-summary(train_ub[,as.numeric(input$var2)])
-    boxplot(x,horizontal=TRUE,col="brown",main=names(train_ub[,as.numeric(input$var2)]))
-  })
+
   
   output$cor2 <- renderPlot({
     train_ub_corr <- as.data.frame(lapply(train_ub, as.numeric))
@@ -211,13 +233,13 @@ shinyServer(function(input, output) {
   
   output$intro <- renderText({
     paste( "<p>&nbsp;&nbsp;&nbsp;Les <b>Support Vector Machines</b> (SVM) représentent une méthode statistique développée dans les années 1990.</p>",
-           "<p>&nbsp;&nbsp;Cette méthode est destinée à résoudre des problèmes de classification puisqu’elle va permettre de déterminer si un élément appartient ou non à une classe.</p>")
+           "<p>&nbsp;&nbsp;&nbsp;Cette méthode est destinée à résoudre des problèmes de classification puisqu’elle va permettre de déterminer si un élément appartient ou non à une classe.</p>")
   })
   
   output$intro2 <- renderText({
-    paste( "<p>&nbsp;&nbsp;Pour mieux comprendre son fonctionnement, il est utile de s’intéresser à sa représentation graphique.
+    paste( "<p>&nbsp;&nbsp;&nbsp;Pour mieux comprendre son fonctionnement, il est utile de s’intéresser à sa représentation graphique.
            Pour cela, on dispose d’un ensemble de données. Notre but va être de chercher à les séparer en deux groupes distincts.</p>",
-           "<p>&nbsp;&nbsp;Un groupe représente ainsi la survenance de l’évènement (prévision 1) et l’autre la non-survenance (prévision 0). Cette séparation linéaire va se faire à l’aide d’une frontière appelée <b>hyperplan</b>.</p>")
+           "<p>&nbsp;&nbsp;&nbsp;Un groupe représente ainsi la survenance de l’évènement (prévision 1) et l’autre la non-survenance (prévision 0). Cette séparation linéaire va se faire à l’aide d’une frontière appelée <b>hyperplan</b>.</p>")
   })
   
   
@@ -247,7 +269,7 @@ shinyServer(function(input, output) {
            L’algorithme SVM va nous aider à trouver l'optimal, celui qui maximise la séparation en classant correctement toutes les observations.
            Pour le trouver, il suffit de chercher l’hyperplan pour lequel la distance entre la frontière des deux groupes et l’observation la plus proche est maximale.</p>",
            
-           "<p>&nbsp;&nbsp;Le double de cette distance est appelée <b>marge</b>. On parlera donc de maximisation de la marge.
+           "<p>&nbsp;&nbsp;&nbsp;Le double de cette distance est appelée <b>marge</b>. On parlera donc de maximisation de la marge.
            Il en résulte que les observations les plus proches de la frontière, appelées <b> vecteurs de supports </b>, sont les points situés sur la marge.</p>")
   })
   
@@ -272,7 +294,7 @@ shinyServer(function(input, output) {
   })
   
   output$cout2 <- renderText({
-    paste( "<p>&nbsp;&nbsp;Le premier est que la séparation optimale reste linéaire malgré le fait que quelques observations ne puissent pas être correctement classées.</p>")
+    paste( "<p>&nbsp;&nbsp;&nbsp;Le premier est que la séparation optimale reste linéaire malgré le fait que quelques observations ne puissent pas être correctement classées.</p>")
   })
   
   output$plot_almostlinear_SVM <- renderPlot({
@@ -294,11 +316,11 @@ shinyServer(function(input, output) {
   })
   
   output$vr <- renderText({
-    paste( "<p>&nbsp;&nbsp;Pour définir le nombre d'observations mal classées autorisé <b>(variable ressort)</b>, on fait appel à un <b>paramètre de pénalisation</b> qui est le <b>coût</b>.<br>
+    paste( "<p>&nbsp;&nbsp;&nbsp;Pour définir le nombre d'observations mal classées autorisé <b>(variable ressort)</b>, on fait appel à un <b>paramètre de pénalisation</b> qui est le <b>coût</b>.<br>
            On l'utilise car les performances des SVMs y sont très sensibles.
            Ce paramètre permet l’acceptation d'un certain nombre de variables ressorts dans le but de maximiser la marge.</p>",
            
-           "<p>&nbsp;&nbsp;Cependant, il faut être prudent car lorsqu'on choisit un coût élevé, cela signifie que peu d’erreurs de classification sont acceptées et donc que la marge sera plus petite.
+           "<p>&nbsp;&nbsp;&nbsp;Cependant, il faut être prudent car lorsqu'on choisit un coût élevé, cela signifie que peu d’erreurs de classification sont acceptées et donc que la marge sera plus petite.
            Dans ce cas, on fait face à un risque de <b>sur-apprentissage</b>.
            Dans la situation inverse, lorsque le coût est faible, la priorité est donnée à la maximisation de la marge, au préjudice de la minimisation du nombre d’erreurs de classification. 
            On est alors face à un risque de <b>sous-apprentissage</b>.
@@ -306,7 +328,7 @@ shinyServer(function(input, output) {
   })
   
   output$vr2 <- renderText({
-    paste( "<p>&nbsp;&nbsp;Le deuxième cas de figure apparaît lorsque l’échantillon n’est pas linéairement séparable.</p>")
+    paste( "<p>&nbsp;&nbsp;&nbsp;Le deuxième cas de figure apparaît lorsque l’échantillon n’est pas linéairement séparable.</p>")
   })
   
   
@@ -331,7 +353,7 @@ shinyServer(function(input, output) {
   output$fin <- renderText({
     paste( "<p>&nbsp;&nbsp;&nbsp;Ici on constate que la séparation linéaire n’est pas possible.
            Afin de trouver la séparation optimale on va alors chercher à <b>transformer l’espace de représentation des données d’entrée</b> en un espace de plus grandes dimensions en rajoutant des variables explicatives créées à partir de la transformation des variables initiales.</p>",
-           "<p>&nbsp;&nbsp;Cette transformation se fait à l’aide des <b>fonctions kernels</b>. Elles sont très utile puisque l’on n’a pas besoin de connaître la transformation à appliquer.
+           "<p>&nbsp;&nbsp;&nbsp;Cette transformation se fait à l’aide des <b>fonctions kernels</b>. Elles sont très utile puisque l’on n’a pas besoin de connaître la transformation à appliquer.
            Dans ce nouvel espace de plus grande dimension, il sera alors plus probable de trouver une séparation linéaire.</p>")
     
   })
