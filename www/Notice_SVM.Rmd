@@ -15,8 +15,6 @@ knitr::opts_chunk$set(echo = TRUE)
 <br/>
 
 <h2> 1.	Préambule </h2>
-<h3>    1.1.	Présentation de l’application </h3>
-<h3>    1.2.	Notice d’utilisation à télécharger </h3>
 
 <br/>
 
@@ -30,7 +28,8 @@ knitr::opts_chunk$set(echo = TRUE)
 
 <h2>  3.	Support Vector Machine </h2>
 <h3>   3.1.	Principe </h3>
-<h3>    3.2.	Démonstration et Comparaison </h3>
+<h3>    3.2.	Modèles </h3>
+<h3>    3.3.	Démonstration et Comparaison </h3>
 
 
 

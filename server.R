@@ -428,7 +428,7 @@ shinyServer(function(input, output) {
     
     #Ensemble
     ggplot() + 
-      ggtitle("Courbes ROC") + theme_bw() + theme(plot.title = element_text(colour="#446280", size=24)) +
+      ggtitle("Courbes ROC") + theme_bw() + theme(plot.title = element_text(family="sans", colour="#2C3E50", size=24)) +
       geom_line(data = roc_glm.data, aes(x=fpr, y=tpr, colour = "Régression Logistique")) + 
       geom_line(data = roc_rf.data, aes(x = fpr, y=tpr, colour = "Random Forest")) +
       geom_line(data = roc_gb.data, aes(x = fpr, y=tpr, colour = "Gradient Boosting")) +
@@ -474,7 +474,7 @@ shinyServer(function(input, output) {
     
     ##Ensemble
     ggplot() + 
-      ggtitle("Courbes PR") + theme_bw() + theme(plot.title = element_text(colour="#446280", size=24)) +
+      ggtitle("Courbes Précision-Recall") + theme_bw() + theme(plot.title = element_text(family="sans", colour="#2C3E50", size=24)) +
       geom_line(data = pr_glm.data, aes(x=prec, y=rec, colour = "Régression Logistique")) +
       geom_line(data = pr_rf.data, aes(x = prec, y=rec, colour = "Random Forest")) +
       geom_line(data = pr_gb.data, aes(x = prec, y=rec, colour = "Gradient Boosting")) +
