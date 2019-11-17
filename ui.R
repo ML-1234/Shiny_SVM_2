@@ -119,7 +119,7 @@ shinyUI(fluidPage(theme = shinytheme("flatly"),
                                                    
                                                    left="20%", right = "20%")
                                         ),
-                                        tabPanel("Démonstration et Comparaison",
+                                        tabPanel("Modèles",
                                                  h1("Application de la méthode des SVM"),
                                                  sidebarLayout(
                                                    sidebarPanel(
@@ -209,13 +209,13 @@ shinyUI(fluidPage(theme = shinytheme("flatly"),
                                                      div(plotOutput("m_gb", height = 400, width = 500), align="center"),
                                                      htmlOutput("optimal_gb")
                                                    )
-                                                 ),
+                                                 )),
                                                  
                                                  
+                                        tabPanel("Comparaison et conclusion", 
+                                                 splitLayout(cellWidths = c("45%", "55%"), div(plotOutput("roc", height=500, width=600), align="center"), div(plotOutput("prcurve", height=500, width=800), align="center")),
                                                  
-                                                 h1("Comparaison et conclusion"),
-                                                 div(plotOutput("roc", height=500, width=600), align="center"),
-                                                 div(plotOutput("prcurve", height=500, width=600), align="center"),
+                                                 h3("Tableau de comparaison", align="center"),
                                                  div(tableOutput("ma_table"),align="center")
                                         ))
                              ))))

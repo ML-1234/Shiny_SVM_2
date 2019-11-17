@@ -117,7 +117,7 @@ shinyServer(function(input, output) {
   })
   
   
-  output$pa1 <- renderText({paste("\n<br/><p>&nbsp;&nbsp;&nbsp;Afin de pouvoir mettre en application la méthode des SVM, nous avons utilisé le base de données « Credit Card Fraud Detection », téléchargeable sur le site Kaggle à l’adresse suivante :", a("Credit Card Fraud Detection", href="https://www.kaggle.com/mlg-ulb/creditcardfraud"), ".</p>")})
+  output$pa1 <- renderText({paste("\n<br/><p>&nbsp;&nbsp;&nbsp;Afin de pouvoir mettre en application la méthode des SVM, nous avons utilisé la base de données « Credit Card Fraud Detection », téléchargeable sur le site Kaggle à l’adresse suivante :", a("Credit Card Fraud Detection", href="https://www.kaggle.com/mlg-ulb/creditcardfraud"), ".</p>")})
   
   output$pa2 <- renderText({paste("<p>&nbsp;&nbsp;&nbsp;Cette base de données contient deux jours de transactions effectuées par des cartes de crédit européennes en Septembre 2013, période au cours de laquelle 492 cas de fraudes ont été répertoriés, pour 284 807 transactions.</p>")})
   
@@ -428,18 +428,17 @@ shinyServer(function(input, output) {
     
     #Ensemble
     ggplot() + 
+      ggtitle("Courbes ROC") + theme_bw() + theme(plot.title = element_text(colour="#446280", size=24)) +
       geom_line(data = roc_glm.data, aes(x=fpr, y=tpr, colour = "Régression Logistique")) + 
       geom_line(data = roc_rf.data, aes(x = fpr, y=tpr, colour = "Random Forest")) +
       geom_line(data = roc_gb.data, aes(x = fpr, y=tpr, colour = "Gradient Boosting")) +
       geom_line(data = roc_svm.data, aes(x = fpr, y=tpr, colour = "Support Vector Machine")) +
       
-      geom_abline(color = "darkgrey", linetype=2) + theme_bw() + 
+      geom_abline(color = "darkgrey", linetype=2) + 
       scale_colour_manual(name = "Modèles", values = cols) + 
       xlab("Taux de Faux positifs") +
       ylab("Taux de Vrais positifs") +
-      theme(legend.position = c(0.8, 0.2), 
-            legend.text = element_text(size = 15), 
-            legend.title = element_text(size = 15))
+      theme(legend.position = "none")
     
   })
   # Courbes PR #
@@ -474,19 +473,19 @@ shinyServer(function(input, output) {
                               rec=perf_rf@y.values[[1]], model="Random Forest")
     
     ##Ensemble
-    ggplot() +
+    ggplot() + 
+      ggtitle("Courbes PR") + theme_bw() + theme(plot.title = element_text(colour="#446280", size=24)) +
       geom_line(data = pr_glm.data, aes(x=prec, y=rec, colour = "Régression Logistique")) +
       geom_line(data = pr_rf.data, aes(x = prec, y=rec, colour = "Random Forest")) +
       geom_line(data = pr_gb.data, aes(x = prec, y=rec, colour = "Gradient Boosting")) +
       geom_line(data = pr_svm.data, aes(x = prec, y=rec, colour = "Support Vector Machine")) +
       
-      #geom_abline(color = "red", linetype=2) + 
-      theme_bw() +
+      
       scale_colour_manual(name = "Modèles", values = cols) +
       xlab("Recall") +
       ylab("Precision") +
-      theme(legend.position = c(0.8, 0.2),
-            legend.text = element_text(size = 15),
+      theme(legend.position = "right", 
+            legend.text = element_text(size = 15), 
             legend.title = element_text(size = 15))
     
   })
