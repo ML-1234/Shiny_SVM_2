@@ -9,17 +9,17 @@ shinyUI(fluidPage(theme = shinytheme("flatly"),
                   navbarPage("Sommaire",
                              
                              tabPanel("Préambule",
-                                                 sidebarLayout(
-                                                   sidebarPanel(
-                                                     h3("Notice d'utilisation"),
-                                                     downloadButton("notice",
-                                                                    "Télécharger la notice"), width=3),
-                                                   mainPanel(
-                                                     HTML("<br/>"),
-                                                     h3("Présentation de l'application"),
-                                                     div(htmlOutput("pre",align="justify",width=500,height = 400))
-                                                 ))),
-                                        
+                                      sidebarLayout(
+                                        sidebarPanel(
+                                          h3("Notice d'utilisation"),
+                                          downloadButton("notice",
+                                                         "Télécharger la notice"), width=3),
+                                        mainPanel(
+                                          HTML("<br/>"),
+                                          h3("Présentation de l'application"),
+                                          div(htmlOutput("pre",align="justify",width=500,height = 400))
+                                        ))),
+                             
                              
                              
                              tabPanel("Base de données",
@@ -55,33 +55,33 @@ shinyUI(fluidPage(theme = shinytheme("flatly"),
                                                    
                                                    
                                                    left="20%", right="20%" )
-                                                 ),
+                                        ),
                                         
                                         
                                         tabPanel("Traitement",
-                                        absolutePanel(
-                                          h2("Données asymétriques"),
-                                          div(htmlOutput("p1"), align="justify"),
-                                          
-                                          h3("Distribution de la variable cible avant traitement", align="center"),
-                                          div(plotOutput("g1", height=500, width=400), align="center"),
-                                          
-                                          div(htmlOutput("p2a"), align="justify"),
-                                          div(htmlOutput("p2b"), align="left"),
-                                          div(htmlOutput("p2c"), align="justify"),
-                                          
-                                          h2("Traitements appliqués"),
-                                          div(htmlOutput("p3"), align="justify"),
-                                          
-                                          
-                                          h2("Présentation de la nouvelle base d’apprentissage"),
-                                          div(htmlOutput("p4"), align="justify"),
-                                          
-                                          h3("Distribution de la variable cible après traitement", align="center"),
-                                          div(plotOutput("g4", height=500, width=400), align="center"),
-
-                                          
-                                          left="20%", right="20%" )
+                                                 absolutePanel(
+                                                   h2("Données asymétriques"),
+                                                   div(htmlOutput("p1"), align="justify"),
+                                                   
+                                                   h3("Distribution de la variable cible avant traitement", align="center"),
+                                                   div(plotOutput("g1", height=500, width=400), align="center"),
+                                                   
+                                                   div(htmlOutput("p2a"), align="justify"),
+                                                   div(htmlOutput("p2b"), align="left"),
+                                                   div(htmlOutput("p2c"), align="justify"),
+                                                   
+                                                   h2("Traitements appliqués"),
+                                                   div(htmlOutput("p3"), align="justify"),
+                                                   
+                                                   
+                                                   h2("Présentation de la nouvelle base d’apprentissage"),
+                                                   div(htmlOutput("p4"), align="justify"),
+                                                   
+                                                   h3("Distribution de la variable cible après traitement", align="center"),
+                                                   div(plotOutput("g4", height=500, width=400), align="center"),
+                                                   
+                                                   
+                                                   left="20%", right="20%" )
                                         ))),
                              
                              
@@ -92,8 +92,8 @@ shinyUI(fluidPage(theme = shinytheme("flatly"),
                                                    div(htmlOutput("intro"), align="justify"),
                                                    
                                                    
-                                                   h2("Cas linéairement séparable"),
-                                                  
+                                                   h4(em("CAS LINEAIREMENT SEPARABLE"),align="center"),
+                                                   
                                                    div(htmlOutput("intro2"), align="justify"),
                                                    div(plotOutput("plot_linear", height = 300, width = 400), align="center"),
                                                    
@@ -103,14 +103,14 @@ shinyUI(fluidPage(theme = shinytheme("flatly"),
                                                    div(htmlOutput("cout"), align="justify"),
                                                    
                                                    
-                                                   h2("Cas presque linéairement séparable"),
+                                                   h4(em("CAS PRESQUE LINEAIREMENT SEPARABLE"),align="center"),
                                                    
                                                    div(htmlOutput("cout2"), align="justify"),
                                                    div(plotOutput("plot_almostlinear_SVM", height = 300, width = 400), align="center"),
                                                    
                                                    div(htmlOutput("vr"), align="justify"),
                                                    
-                                                   h2("Cas non linéairement séparable"),
+                                                   h4(em("CAS NON LINEAIREMENT SEPARABLE"),align="center"),
                                                    
                                                    div(htmlOutput("vr2"), align="justify"),
                                                    div(plotOutput("plot_radial_SVM", height = 300, width = 400), align="center"),
@@ -135,10 +135,10 @@ shinyUI(fluidPage(theme = shinytheme("flatly"),
                                                      &nbsp;&nbsp;&nbsp;En réalisant les transformations de variables adéquates, on peut ainsi rendre linéairement séparable un problème qui ne l’est pas dans l’espace initial. <br> <br>
                                                      <ul>
                                                      <li> <strong> Noyau :</strong> aide à projeter des données dans un espace dimensionnel supérieur où les points peuvent être séparés linéairement.</li>
-                                                     <li> <strong> Coût de pénalisation :</strong> permet de pénaliser les erreurs plus ou moins fortement selon le niveau de coïncidence souhaité des données d’apprentissage. </li>
+                                                     <li> <strong> Coût de pénalisation :</strong> permet de pénaliser les erreurs plus ou moins fortement selon que l’on veuille plus ou moins coïncider aux données d’apprentissage. </li>
                                                      </ul>
                                                      "), align="justify"),
-                                                    
+                                                     
                                                      htmlOutput("optimal_svm"),
                                                      div(plotOutput("m_svm", height = 400, width = 500), align="center")
                                                    )),
@@ -206,7 +206,7 @@ shinyUI(fluidPage(theme = shinytheme("flatly"),
                                                      <li> <strong> Paramètre de lissage (shrinkage) : </strong> s'il est trop faible, on aura une lenteur de convergence car les corrections seront timides. S’il est trop élevé,  on a des oscillations et donc sur-apprentissage. Bonne valeur usuelle autour de 0.1.</li>
                                                      </ul> "), align="justify"),
                                                      
-                                                    div(plotOutput("m_gb", height = 400, width = 500), align="center"),
+                                                     div(plotOutput("m_gb", height = 400, width = 500), align="center"),
                                                      htmlOutput("optimal_gb")
                                                    )
                                                  ),
@@ -215,6 +215,7 @@ shinyUI(fluidPage(theme = shinytheme("flatly"),
                                                  
                                                  h1("Comparaison et conclusion"),
                                                  div(plotOutput("roc", height=500, width=600), align="center"),
+                                                 div(plotOutput("prcurve", height=500, width=600), align="center"),
                                                  div(tableOutput("ma_table"),align="center")
                                         ))
                              ))))

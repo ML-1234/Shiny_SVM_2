@@ -93,7 +93,7 @@ shinyServer(function(input, output) {
     paste( "<br><br>&nbsp;&nbsp;&nbsp;Dans le cadre de notre cursus universitaire, nous avons mis en place un démonstrateur sous R Shiny afin de montrer l'implémentation 
            et les performances des machines à vecteurs de support dans la détection des transactions frauduleuses commises sur les cartes de crédit.<br> <br>
            &nbsp;&nbsp;&nbsp;Avant de commencer, il est important pour nous de remercier M. HURLIN, créateur de ce projet et professeur de SVM, M. DELSOL, professeur de R Shiny ainsi que  M. DUDEK pour son intervention sur le déploiement d'applications Shiny sous Github.<br> <br>
-           &nbsp;&nbsp;&nbsp;Dès à présent, afin de comprendre le fonctionnement général de ce démonstrateur, nous vous invitons à télécharger la notice via le lien proposé.")
+           &nbsp;&nbsp;&nbsp;Dès à présent, afin de comprendre le fonctionnement de ce démonstrateur, nous vous invitons à télécharger la notice d'utilisation située sur la gauche.")
   })
   
   ## --- Notice d'utilisation --- ##
@@ -117,16 +117,16 @@ shinyServer(function(input, output) {
   })
   
   
-  output$pa1 <- renderText({paste("\n<br/><p>&nbsp;&nbsp;&nbsp;Afin de pouvoir mettre en application la méthode des SVM, nous avons utilisé le base de données « Credit Card Fraud Detection », téléchargeable sur le site Kaggle à l’adresse suivante :", a("Credit Card Fraud Detection", href="https://www.kaggle.com/mlg-ulb/creditcardfraud"), ".</p>")})
+  output$pa1 <- renderText({paste("\n<br/><p>&nbsp;&nbsp;&nbsp;Afin de pouvoir mettre en application la méthode des SVM, nous avons utilisé le base données mise « Credit Card Fraud Detection », téléchargeable sur le site Kaggle à l’adresse suivante :", a("Credit Card Fraud Detection", href="https://www.kaggle.com/mlg-ulb/creditcardfraud"), ".</p>")})
   
-  output$pa2 <- renderText({paste("<p>&nbsp;&nbsp;&nbsp;Cette base de données contient deux jours de transactions effectuées par des cartes de crédit européennes en Septembre 2013, période au cours de laquelle 492 cas de fraudes ont été répertoriés, pour 284 807 transactions.</p>")})
+  output$pa2 <- renderText({paste("<p>&nbsp;&nbsp;&nbsp;Cette base de données contient deux jours de transactions effectuées par des cartes de crédit européennes et Septembre 2013, période au cours de laquelle 492 cas de fraudes ont été répertoriés, pour 284 807 transactions.</p>")})
   
-  output$pa3 <- renderText({paste("<p>&nbsp;&nbsp;&nbsp;L’objectif de la modélisation de cette base de données est d’identifier les transactions frauduleuses à l’aide de la variable cible binaire nommée <strong>Class</strong>, valant 1 en cas de fraude et 0 dans le cas contraire.</p>")})
+  output$pa3 <- renderText({paste("<p>&nbsp;&nbsp;&nbsp;L’objectif de la modélisation de cette base de données est d’identifier les transactions frauduleuses à l’aide de la variable cible binaire nommée <strong>Class</strong>, valant 1 en cas de fraude et 0 sinon.</p>")})
   
   output$pa4 <- renderText({paste("\n<br/><p>Notre jeu d’entrée est composé de 30 prédicteurs, tous numériques : </p>", 
-                                  "<ul><li><strong>V1, V2, …, V28</strong> : ces variables ont été anonymisées pour des raisons de confidentialités et ont reçu une transformation ACP (Analyse en composantes principales).</li>
+                                  "<ul><li><strong>V1, V2, …, V28</strong> ont été anonymisées pour des raisons de confidentialités et ont reçu une transformation ACP (Analyse en composantes principales).</li>
                                   <li><strong>Time</strong> exprime le temps en secondes entre chaque transaction et la première transaction de la base de données.</li>
-                                  <li><strong>Amount</strong> donne le montant de chaque transaction.</li></ul>", "<br/>")})
+                                  <li><strong>Amount</strong> nous donne le montant de chaque transaction.</li></ul>", "<br/>")})
   
   output$table <- DT::renderDataTable({
     DT::datatable(bdd, options = list(scrollX=TRUE, scrollCollapse=TRUE))}) 
@@ -134,8 +134,8 @@ shinyServer(function(input, output) {
   ## --- Traitement des données --- ##
   
   output$p1 <- renderText({paste("\n<br/><p>&nbsp;&nbsp;&nbsp;Dans la base de données <em> creditcard</em>, les transactions frauduleuses ne représentent que <strong> 0.1727486% </strong> des observations.
-                                       Nos données sont donc largement asymétriques, comme nous le montre le graphique suivant,
-                                       dans lequel la colonne des transactions frauduleuses est presque invisible.</p>")})
+                                 Nos données sont donc largement asymétriques, comme nous le montre le graphique suivant,
+                                 dans lequel la colonne des transactions frauduleuses est presque invisible.</p>")})
   
   
   output$g1 <- renderPlot({ggplot(bdd, aes(Class)) + geom_bar(fill = c("#0073C2FF","#ffa500")) +
@@ -145,33 +145,33 @@ shinyServer(function(input, output) {
   
   
   output$p2a <- renderText({paste("<p>&nbsp;&nbsp;&nbsp;Lors de la modélisation, l’asymétrie des données peut fausser le résultat. 
-                                                     En effet, la classification repose sur un mécanisme de minimisation du taux d’erreur et sur une hypothèse de bonne 
-                                                     représentation de la population, mais le manque d’observations de la classe minoritaire ne donne pas assez d’informations au modèle
-                                                     pour bien apprendre de ces données.</p>",
+                                  En effet, la classification repose sur un mécanisme de minimisation du taux d’erreur et sur une hypothèse de bonne 
+                                  représentation de la population, mais le manque d’observations de la classe minoritaire ne donne pas assez d’informations au modèle
+                                  pour bien apprendre de ces données.</p>",
                                   "<p>&nbsp;&nbsp;&nbsp;Ainsi, il pourra avoir un très bon taux d'exactitude en classant tous les individus dans la classe largement majoritaire.</p>",
                                   "<p>&nbsp;&nbsp;&nbsp;On aura donc à la fois un problème de représentativité de la population par l’échantillon et avec l’aspect minimiseur 
-                                               du taux d’erreur de l’algorithme du modèle en lui-même.</p>",
+                                  du taux d’erreur de l’algorithme du modèle en lui-même.</p>",
                                   "<p>&nbsp;&nbsp;&nbsp;Il se dessine alors deux méthodes de traitement des données asymétriques : changer l’algorithme ou rééquilibrer les données 
-                                               en utilisant des <strong> stratégies d’échantillonnage </strong>. C’est cette dernière technique que nous avons choisie de développer ici.</p>",
+                                  en utilisant des <strong> stratégies d’échantillonnage </strong>. C’est cette dernière technique que nous avons choisi de développer ici.</p>",
                                   "Dans les stratégies d’échantillonnage, il existe deux manières de procéder :")})
   
-  output$p2b <- renderText({paste("\n<br/><ul><li> Le <strong> sur-échantillonnage </strong> : augmenter le nombre d’observations de la classe minoritaire en créant 
-                                                         des observations artificielles. </li>
-                                  <li> Le <strong> sous-échantillonnage </strong> : retirer des observations de la classe majoritaire. 
-                                                         Le choix des observations à supprimer pouvant se faire aléatoirement ou selon des critères spécifiques. </li> </ul>")})
+  output$p2b <- renderText({paste("\n<br/><ul><li> Le <strong> sur-échantillonnage </strong> : consiste à augmenter le nombre d’observations de la classe minoritaire en créant 
+                                  des observations artificielles. </li>
+                                  <li> Le <strong> sous-échantillonnage </strong> : enlève des observations de la classe majoritaire. 
+                                  Le choix des observations à supprimer peut se faire aléatoirement ou selon des critères spécifiques. </li> </ul>")})
   
   output$p2c <- renderText({paste("<br/>&nbsp;&nbsp;&nbsp;En général, le sur-échantillonnage est préféré car il ne suppose pas la perte d’une partie des données, 
-                                               mais le sous-apprentissage peut aussi aider lorsque l’échantillon est considéré trop large.",
+                                  mais le sous-apprentissage peut aussi aider lorsque l’échantillon est considéré trop large.",
                                   "\n<br/>&nbsp;&nbsp;&nbsp;Afin de ne pas surmener l’application Shiny, nous avons préféré appliquer la méthode de sous-échantillonnage, 
-                                               et garder ainsi un échantillon d’apprentissage avec moins d’observations.")})
+                                  et garder ainsi un échantillon d’apprentissage avec moins d’observations.")})
   
   
   output$p3 <- renderText({paste("\n", "&nbsp;&nbsp;&nbsp;Avant d’appliquer un quelconque traitement sur nos données, nous avons extrait de la base de données un <strong> échantillon 
-                                                     de validation </strong>, afin de pouvoir vérifier la classification sur un échantillon qui a gardé l’asymétrie d’origine. ",
+                                 de validation </strong>, afin de pouvoir vérifier la classification sur un échantillon qui a gardé l’asymétrie d’origine. ",
                                  "\n", "&nbsp;&nbsp;&nbsp;Toujours dans l’objectif de garder une application la plus fluide possible, nous avons retenu la méthode de 
-                                                     sous-échantillonnage la plus simple : le <strong> sous-échantillonnage aléatoire </strong>, qui retire aléatoirement des observations de la classe majoritaire.",
+                                 sous-échantillonnage la plus simple : le <strong> sous-échantillonnage aléatoire </strong>, qui retire aléatoirement des observations de la classe majoritaire.",
                                  "\n", "&nbsp;&nbsp;&nbsp;Afin de garder un nombre significatif d’observations ainsi que le caractère asymétrique de la base de données initiale 
-                                                     dans l’échantillon, nous avons arbitrairement choisi de d’augmenter à <strong> 8% </strong> la part de transactions frauduleuses dans l’échantillon d’apprentissage.", 
+                                 dans l’échantillon, nous avons arbitrairement choisi de d’augmenter à <strong> 8% </strong> la part de transactions frauduleuses dans l’échantillon d’apprentissage.", 
                                  sep="<br/>")})
   
   
@@ -182,7 +182,7 @@ shinyServer(function(input, output) {
       labs(x = " ", y = " ") + 
       scale_x_discrete(labels=c("Non-Frauduleuses", "Frauduleuses")) +
       theme(plot.title = element_text(hjust = 0.5, size = 20, face = "italic"))})
-
+  
   
   
   
@@ -190,14 +190,15 @@ shinyServer(function(input, output) {
   ## --- Principe --- ##
   
   output$intro <- renderText({
-    paste( "<p>&nbsp;&nbsp;&nbsp;Les <b>Support Vector Machines</b> (SVM) représentent une méthode statistique développée dans les années 1990.</p>",
+    paste( "<br> <br> <p>&nbsp;&nbsp;&nbsp;Les <b>Support Vector Machines</b> (SVM) représentent une méthode statistique développée dans les années 1990.</p>",
            "<p>&nbsp;&nbsp;&nbsp;Cette méthode est destinée à résoudre des problèmes de classification puisqu’elle va permettre de déterminer si un élément appartient ou non à une classe.</p>")
   })
   
   output$intro2 <- renderText({
     paste( "<p>&nbsp;&nbsp;&nbsp;Pour mieux comprendre son fonctionnement, il est utile de s’intéresser à sa représentation graphique.
            Pour cela, on dispose d’un ensemble de données. Notre but va être de chercher à les séparer en deux groupes distincts.</p>",
-           "<p>&nbsp;&nbsp;&nbsp;Un groupe représente ainsi la survenance de l’évènement (prévision 1) et l’autre la non-survenance (prévision 0). Cette séparation linéaire va se faire à l’aide d’une frontière appelée <b>hyperplan</b>.</p>")
+           "<p>&nbsp;&nbsp;&nbsp;Un groupe représente ainsi la survenance de l’évènement (prévision 1) et l’autre la non-survenance (prévision 0). <br>
+           Pour effectuer cette séparation linéaire, il est utilisé une frontière appelée <b>hyperplan</b>.</p>")
   })
   
   
@@ -228,7 +229,7 @@ shinyServer(function(input, output) {
            Pour le trouver, il suffit de chercher l’hyperplan pour lequel la distance entre la frontière des deux groupes et l’observation la plus proche est maximale.</p>",
            
            "<p>&nbsp;&nbsp;&nbsp;Le double de cette distance est appelée <b>marge</b>. On parlera donc de maximisation de la marge.
-           Il en résulte que les observations les plus proches de la frontière, appelées <b> vecteurs de supports </b>, sont les points situés sur la marge.</p>")
+           Il en résulte que les observations les plus proches de la frontière, appelées <b> vecteurs de supports </b>, sont les points situés sur les extrémités de la marge.</p>")
   })
   
   output$plot_linear_SVM <- renderPlot({
@@ -248,7 +249,7 @@ shinyServer(function(input, output) {
   
   output$cout <- renderText({
     paste( "<p>&nbsp;&nbsp;&nbsp;Cependant, il arrive souvent que l’on soit face à des échantillons non linéairement séparables.
-           Dans cette situation, deux cas de figures apparaissent.</p>")
+           Dans cette situation, deux cas de figure apparaissent.</p> <br>")
   })
   
   output$cout2 <- renderText({
@@ -274,15 +275,15 @@ shinyServer(function(input, output) {
   })
   
   output$vr <- renderText({
-    paste( "<p>&nbsp;&nbsp;&nbsp;Pour définir le nombre d'observations mal classées autorisé <b>(variable ressort)</b>, on fait appel à un <b>paramètre de pénalisation</b> qui est le <b>coût</b>.<br>
+    paste( "<p>&nbsp;&nbsp;&nbsp;Pour définir le nombre de <b>variables ressorts</b> c'est à dire le nombre d'observations mal classées autorisé , on fait appel à un <b>paramètre de pénalisation</b> qui est le <b>coût</b>.<br>
            On l'utilise car les performances des SVMs y sont très sensibles.
            Ce paramètre permet l’acceptation d'un certain nombre de variables ressorts dans le but de maximiser la marge.</p>",
            
            "<p>&nbsp;&nbsp;&nbsp;Cependant, il faut être prudent car lorsqu'on choisit un coût élevé, cela signifie que peu d’erreurs de classification sont acceptées et donc que la marge sera plus petite.
-           Dans ce cas, on fait face à un risque de <b>sur-apprentissage</b>.
+           Dans ce cas, on fait face à un risque de <b>sur-apprentissage</b>. <br>
            Dans la situation inverse, lorsque le coût est faible, la priorité est donnée à la maximisation de la marge, au préjudice de la minimisation du nombre d’erreurs de classification. 
-           On est alors face à un risque de <b>sous-apprentissage</b>.
-           L'objectif est alors de trouver un arbitrage entre l’optimisation de la marge et le nombre d'erreurs de classification.</p>")
+           On est alors face à un risque de <b>sous-apprentissage</b>. <br>
+           L'objectif est alors de trouver un arbitrage entre l’optimisation de la marge et le nombre d'erreurs de classification.</p> <br>") 
   })
   
   output$vr2 <- renderText({
@@ -310,8 +311,9 @@ shinyServer(function(input, output) {
   })
   output$fin <- renderText({
     paste( "<p>&nbsp;&nbsp;&nbsp;Ici on constate que la séparation linéaire n’est pas possible.
-           Afin de trouver la séparation optimale on va alors chercher à <b>transformer l’espace de représentation des données d’entrée</b> en un espace de plus grandes dimensions en rajoutant des variables explicatives créées à partir de la transformation des variables initiales.</p>",
-           "<p>&nbsp;&nbsp;&nbsp;Cette transformation se fait à l’aide des <b>fonctions kernels</b>. Elles sont très utiles puisqu'il n'est pas besoin de connaître la transformation à appliquer.
+           Afin de trouver la séparation optimale on va alors chercher à <b>transformer l’espace de représentation des données d’entrée</b> en un espace de plus grandes dimensions.
+           Pour se faire, on va rajouter des variables explicatives créées à partir de la transformation des variables initiales.</p>",
+           "<p>&nbsp;&nbsp;&nbsp;Cette transformation se fait à l’aide des <b>fonctions kernels</b>. Elles sont très utile puisque l’on n’a pas besoin de connaître la transformation à appliquer.
            Dans ce nouvel espace de plus grande dimension, il sera alors plus probable de trouver une séparation linéaire.</p>")
     
   })
@@ -346,7 +348,7 @@ shinyServer(function(input, output) {
   output$confusion_RL <- renderPlot({
     draw_confusion_matrix(cmrl(), cols[2])
   })
-
+  
   
   # --- RandomForest --- #
   # Modèle et matrice simple
@@ -370,7 +372,7 @@ shinyServer(function(input, output) {
   # --- Gradient Boosting --- #
   #Modèle
   boost.fit <- reactive({
-
+    
     
     TrainData <- as.matrix(train_ub[,-31] )
     TrainClasses <- as.matrix(train_ub[,31])
@@ -385,7 +387,7 @@ shinyServer(function(input, output) {
     train_ub$Class <- as.factor(train_ub$Class)
     confusionMatrix(boost.pred.class, test$Class)})
   
-
+  
   #Matrice de confusion
   output$m_gb <- renderPlot({draw_confusion_matrix(cmgb(), cols[5])})
   
@@ -442,6 +444,55 @@ shinyServer(function(input, output) {
             legend.title = element_text(size = 15))
     
   })
+  # Courbes PR #
+  output$prcurve <-renderPlot({
+    
+    ##SVM
+    svm.fit.prob <-attr(svm.pred(),"probabilities")
+    ROCRpred_svm <- prediction(svm.fit.prob[,2], test$Class)
+    perf_svm <- ROCR::performance(ROCRpred_svm, 'prec','rec')
+    pr_svm.data <- data.frame(prec=perf_svm@x.values[[1]],
+                              rec=perf_svm@y.values[[1]], model="Support Vector Machine")
+    
+    ##Régression logistique
+    ROCRpred_glm <- prediction(glm.prob(), test$Class)
+    perf_glm <- ROCR::performance(ROCRpred_glm, 'prec','rec')
+    pr_glm.data <- data.frame(prec=perf_glm@x.values[[1]],
+                              rec=perf_glm@y.values[[1]], model="Régression logistique")
+    
+    ##Gradient Boosting
+    ROCRpred_gb <- prediction(boost.pred(), test$Class)
+    perf_gb <- ROCR::performance(ROCRpred_gb, 'prec','rec')
+    pr_gb.data <-data.frame(prec=perf_gb@x.values[[1]],
+                            rec=perf_gb@y.values[[1]], model="Gradient Boosting")
+    
+    ##Random Forest
+    train_ub$Class <- ifelse(train_ub$Class==1, 1,0)
+    test$Class <- ifelse(test$Class==1, 1,0)
+    rf.prob <- predict(rf.fit(),test,type="prob")
+    ROCRpred_rf <- prediction(rf.prob[,2], test$Class)
+    perf_rf <- ROCR::performance(ROCRpred_rf, 'prec','rec')
+    pr_rf.data <-  data.frame(prec=perf_rf@x.values[[1]],
+                              rec=perf_rf@y.values[[1]], model="Random Forest")
+    
+    ##Ensemble
+    ggplot() +
+      geom_line(data = pr_glm.data, aes(x=prec, y=rec, colour = "Régression Logistique")) +
+      geom_line(data = pr_rf.data, aes(x = prec, y=rec, colour = "Random Forest")) +
+      geom_line(data = pr_gb.data, aes(x = prec, y=rec, colour = "Gradient Boosting")) +
+      geom_line(data = pr_svm.data, aes(x = prec, y=rec, colour = "Support Vector Machine")) +
+      
+      #geom_abline(color = "red", linetype=2) + 
+      theme_bw() +
+      scale_colour_manual(name = "Modèles", values = cols) +
+      xlab("Recall") +
+      ylab("Precision") +
+      theme(legend.position = c(0.8, 0.2),
+            legend.text = element_text(size = 15),
+            legend.title = element_text(size = 15))
+    
+  })
+  
   
   
   # Tableau Comparaison #
@@ -452,6 +503,14 @@ shinyServer(function(input, output) {
     AUC_glm <- ROCR::performance(ROCRpred_glm, 'auc')
     AUC_glm <- paste(round(unlist(AUC_glm@y.values)*100, 3),"%")
     
+    perf_glm <- ROCR::performance(ROCRpred_glm, 'prec','rec')
+    pr_glm.data <- data.frame(prec=perf_glm@x.values[[1]],
+                              rec=perf_glm@y.values[[1]], model="Régression logistique")
+    ind = 2:length(perf_glm@x.values[[1]])
+    testglm=data.frame(recall = (perf_glm@x.values[[1]][ind] - perf_glm@x.values[[1]][ind-1]), precision = (perf_glm@y.values[[1]][ind] + perf_glm@y.values[[1]][ind-1]))
+    testglm = subset(testglm, !is.na(testglm$precision))
+    AUPRC_glm = paste(round(sum(testglm$recall * testglm$precision)/2*100,3),"%")
+    
     #Random Forest
     train_ub$Class <- ifelse(train_ub$Class==1, 1,0)
     test$Class <- ifelse(test$Class==1, 1,0)
@@ -460,21 +519,43 @@ shinyServer(function(input, output) {
     AUC_rf <- ROCR::performance(ROCRpred_rf, measure='auc')
     AUC_rf <- paste(round(unlist(AUC_rf@y.values)*100, 3),"%")
     
+    perf_rf <- ROCR::performance(ROCRpred_rf, 'prec','rec')
+    pr_rf.data <-  data.frame(prec=perf_rf@x.values[[1]],
+                              rec=perf_rf@y.values[[1]], model="Random Forest")
+    ind = 2:length(perf_rf@x.values[[1]])
+    testrf=data.frame(recall = (perf_rf@x.values[[1]][ind] - perf_rf@x.values[[1]][ind-1]), precision = (perf_rf@y.values[[1]][ind] + perf_rf@y.values[[1]][ind-1]))
+    testrf = subset(testrf, !is.na(testrf$precision))
+    AUPRC_rf = paste(round(sum(testrf$recall * testrf$precision)/2*100,3),"%")
+    
     #SVM
     svm.fit.prob <-attr(svm.pred(),"probabilities")
     ROCRpred_svm <- prediction(svm.fit.prob[,2], test$Class)
     AUC_svm <- ROCR::performance(ROCRpred_svm,'auc')
     AUC_svm <- paste(round(unlist(AUC_svm@y.values)*100, 3),"%")
     
+    perf_svm <- ROCR::performance(ROCRpred_svm, 'prec','rec')
+    pr_svm.data <- data.frame(prec=perf_svm@x.values[[1]],
+                              rec=perf_svm@y.values[[1]], model="Support Vector Machine")
+    ind <- 2:length(perf_svm@x.values[[1]])
+    testsvm <-data.frame(recall = (perf_svm@x.values[[1]][ind] - perf_svm@x.values[[1]][ind-1]), precision = (perf_svm@y.values[[1]][ind] + perf_svm@y.values[[1]][ind-1]))
+    testsvm <- subset(testsvm, !is.na(testsvm$precision))
+    AUPRC_svm <- paste(round(sum(testsvm$recall * testsvm$precision)/2*100,3),"%")
+    
     #Gradient Boosting
     ROCRpred_gb <- prediction(boost.pred(), test$Class)
     AUC_gb <- ROCR::performance(ROCRpred_gb, 'auc')
     AUC_gb <- paste(round(unlist(AUC_gb@y.values)*100, 3),"%")
     
+    perf_gb <- ROCR::performance(ROCRpred_gb, 'prec','rec')
+    pr_gb.data <-data.frame(prec=perf_gb@x.values[[1]],
+                            rec=perf_gb@y.values[[1]], model="Gradient Boosting")
+    ind = 2:length(perf_gb@x.values[[1]])
+    testgb=data.frame(recall = (perf_gb@x.values[[1]][ind] - perf_gb@x.values[[1]][ind-1]), precision = (perf_gb@y.values[[1]][ind] + perf_gb@y.values[[1]][ind-1]))
+    testgb = subset(testgb, !is.na(testgb$precision))
+    AUPRC_gb = paste(round(sum(testgb$recall * testgb$precision)/2*100,3),"%")
     
-    
-    df <- data.frame(SVM=c(erreur(cmsvm()),AUC_svm), RL=c(erreur(cmrl()),AUC_glm), GB=c(erreur(cmgb()),AUC_gb), RF=c(erreur(cmrf()),AUC_rf))
-    rownames(df)<-c("Taux d'erreur", "AUC")
+    df <- data.frame(SVM=c(erreur(cmsvm()),AUC_svm,AUPRC_svm), RL=c(erreur(cmrl()),AUC_glm,AUPRC_glm), GB=c(erreur(cmgb()),AUC_gb,AUPRC_gb), RF=c(erreur(cmrf()),AUC_rf,AUPRC_rf))
+    rownames(df)<-c("Taux d'erreur", "AUC", "AUPRC")
     colnames(df) <- c("Support Vector Machine","Régression Logistique","Gradient Boosting","Random Forest")
     df
     
@@ -482,6 +563,3 @@ shinyServer(function(input, output) {
   },digits=4, striped = TRUE, bordered = TRUE, rownames=TRUE,width=600) 
   
 })
-
-
-  
