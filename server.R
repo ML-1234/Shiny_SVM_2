@@ -93,7 +93,7 @@ shinyServer(function(input, output) {
     paste( "<br><br>&nbsp;&nbsp;&nbsp;Dans le cadre de notre cursus universitaire, nous avons mis en place un démonstrateur sous R Shiny afin de montrer l'implémentation 
            et les performances des machines à vecteurs de support dans la détection des transactions frauduleuses commises sur les cartes de crédit.<br> <br>
            &nbsp;&nbsp;&nbsp;Avant de commencer, il est important pour nous de remercier M. HURLIN, créateur de ce projet et professeur de SVM, M. DELSOL, professeur de R Shiny ainsi que  M. DUDEK pour son intervention sur le déploiement d'applications Shiny sous Github.<br> <br>
-           &nbsp;&nbsp;&nbsp;Dès à présent, afin de comprendre le fonctionnement de ce démonstrateur, nous vous invitons à télécharger la notice située dans l'onglet suivant.")
+           &nbsp;&nbsp;&nbsp;Dès à présent, afin de comprendre le fonctionnement général de ce démonstrateur, nous vous invitons à télécharger la notice via le lien proposé.")
   })
   
   ## --- Notice d'utilisation --- ##
@@ -117,16 +117,16 @@ shinyServer(function(input, output) {
   })
   
   
-  output$pa1 <- renderText({paste("\n<br/><p>&nbsp;&nbsp;&nbsp;Afin de pouvoir mettre en application la méthode des SVM, nous avons utilisé le base données mise « Credit Card Fraud Detection », téléchargeable sur le site Kaggle à l’adresse suivante :", a("Credit Card Fraud Detection", href="https://www.kaggle.com/mlg-ulb/creditcardfraud"), ".</p>")})
+  output$pa1 <- renderText({paste("\n<br/><p>&nbsp;&nbsp;&nbsp;Afin de pouvoir mettre en application la méthode des SVM, nous avons utilisé le base de données « Credit Card Fraud Detection », téléchargeable sur le site Kaggle à l’adresse suivante :", a("Credit Card Fraud Detection", href="https://www.kaggle.com/mlg-ulb/creditcardfraud"), ".</p>")})
   
-  output$pa2 <- renderText({paste("<p>&nbsp;&nbsp;&nbsp;Cette base de données contient deux jours de transactions effectuées par des cartes de crédit européennes et Septembre 2013, période au cours de laquelle 492 cas de fraudes ont été répertoriés, pour 284 807 transactions.</p>")})
+  output$pa2 <- renderText({paste("<p>&nbsp;&nbsp;&nbsp;Cette base de données contient deux jours de transactions effectuées par des cartes de crédit européennes en Septembre 2013, période au cours de laquelle 492 cas de fraudes ont été répertoriés, pour 284 807 transactions.</p>")})
   
-  output$pa3 <- renderText({paste("<p>&nbsp;&nbsp;&nbsp;L’objectif de la modélisation de cette base de données est d’identifier les transactions frauduleuses à l’aide de la variable cible binaire nommée <strong>Class</strong>, valant 1 en cas de fraude et 0 sinon.</p>")})
+  output$pa3 <- renderText({paste("<p>&nbsp;&nbsp;&nbsp;L’objectif de la modélisation de cette base de données est d’identifier les transactions frauduleuses à l’aide de la variable cible binaire nommée <strong>Class</strong>, valant 1 en cas de fraude et 0 dans le cas contraire.</p>")})
   
   output$pa4 <- renderText({paste("\n<br/><p>Notre jeu d’entrée est composé de 30 prédicteurs, tous numériques : </p>", 
-                                  "<ul><li><strong>V1, V2, …, V28</strong> ont été anonymisées pour des raisons de confidentialités et ont reçu une transformation ACP (Analyse en composantes principales).</li>
+                                  "<ul><li><strong>V1, V2, …, V28</strong> : ces variables ont été anonymisées pour des raisons de confidentialités et ont reçu une transformation ACP (Analyse en composantes principales).</li>
                                   <li><strong>Time</strong> exprime le temps en secondes entre chaque transaction et la première transaction de la base de données.</li>
-                                  <li><strong>Amount</strong> nous donne le montant de chaque transaction.</li></ul>", "<br/>")})
+                                  <li><strong>Amount</strong> donne le montant de chaque transaction.</li></ul>", "<br/>")})
   
   output$table <- DT::renderDataTable({
     DT::datatable(bdd, options = list(scrollX=TRUE, scrollCollapse=TRUE))}) 
@@ -152,13 +152,13 @@ shinyServer(function(input, output) {
                                   "<p>&nbsp;&nbsp;&nbsp;On aura donc à la fois un problème de représentativité de la population par l’échantillon et avec l’aspect minimiseur 
                                                du taux d’erreur de l’algorithme du modèle en lui-même.</p>",
                                   "<p>&nbsp;&nbsp;&nbsp;Il se dessine alors deux méthodes de traitement des données asymétriques : changer l’algorithme ou rééquilibrer les données 
-                                               en utilisant des <strong> stratégies d’échantillonnage </strong>. C’est cette dernière technique que nous avons choisi de développer ici.</p>",
+                                               en utilisant des <strong> stratégies d’échantillonnage </strong>. C’est cette dernière technique que nous avons choisie de développer ici.</p>",
                                   "Dans les stratégies d’échantillonnage, il existe deux manières de procéder :")})
   
-  output$p2b <- renderText({paste("\n<br/><ul><li> Le <strong> sur-échantillonnage </strong> : consiste à augmenter le nombre d’observations de la classe minoritaire en créant 
+  output$p2b <- renderText({paste("\n<br/><ul><li> Le <strong> sur-échantillonnage </strong> : augmenter le nombre d’observations de la classe minoritaire en créant 
                                                          des observations artificielles. </li>
-                                  <li> Le <strong> sous-échantillonnage </strong> : enlève des observations de la classe majoritaire. 
-                                                         Le choix des observations à supprimer peut se faire aléatoirement ou selon des critères spécifiques. </li> </ul>")})
+                                  <li> Le <strong> sous-échantillonnage </strong> : retirer des observations de la classe majoritaire. 
+                                                         Le choix des observations à supprimer pouvant se faire aléatoirement ou selon des critères spécifiques. </li> </ul>")})
   
   output$p2c <- renderText({paste("<br/>&nbsp;&nbsp;&nbsp;En général, le sur-échantillonnage est préféré car il ne suppose pas la perte d’une partie des données, 
                                                mais le sous-apprentissage peut aussi aider lorsque l’échantillon est considéré trop large.",
@@ -248,7 +248,7 @@ shinyServer(function(input, output) {
   
   output$cout <- renderText({
     paste( "<p>&nbsp;&nbsp;&nbsp;Cependant, il arrive souvent que l’on soit face à des échantillons non linéairement séparables.
-           Dans cette situation, deux cas de figure apparaissent.</p>")
+           Dans cette situation, deux cas de figures apparaissent.</p>")
   })
   
   output$cout2 <- renderText({
@@ -311,7 +311,7 @@ shinyServer(function(input, output) {
   output$fin <- renderText({
     paste( "<p>&nbsp;&nbsp;&nbsp;Ici on constate que la séparation linéaire n’est pas possible.
            Afin de trouver la séparation optimale on va alors chercher à <b>transformer l’espace de représentation des données d’entrée</b> en un espace de plus grandes dimensions en rajoutant des variables explicatives créées à partir de la transformation des variables initiales.</p>",
-           "<p>&nbsp;&nbsp;&nbsp;Cette transformation se fait à l’aide des <b>fonctions kernels</b>. Elles sont très utile puisque l’on n’a pas besoin de connaître la transformation à appliquer.
+           "<p>&nbsp;&nbsp;&nbsp;Cette transformation se fait à l’aide des <b>fonctions kernels</b>. Elles sont très utiles puisqu'il n'est pas besoin de connaître la transformation à appliquer.
            Dans ce nouvel espace de plus grande dimension, il sera alors plus probable de trouver une séparation linéaire.</p>")
     
   })

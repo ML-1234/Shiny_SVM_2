@@ -1,13 +1,16 @@
 ---
-title: "Notice d'utilisation"
 output: pdf_document
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+![](En-tête_notice.png)
 
-<h1> Sommaire </h1>
+<br/>
+<br/>
+
+# Sommaire
 
 <br/>
 
@@ -34,17 +37,23 @@ knitr::opts_chunk$set(echo = TRUE)
 # Navigation
 ## Onglets
 
-<p>&nbsp;&nbsp;Afin de naviguer dans l'application, cliquez sur le nom de la partie puis de la sous-partie que vous souhaitez voir s'afficher.</p>
+<p>&nbsp;&nbsp;Afin de naviguer dans l'application, cliquez sur le nom de la partie puis de la sous-partie que vous souhaitez.</p>
 
 <br/>
-  
-![](Navigation.png)
+<div align=“center”>
+<div markdown=“1”>
+
+![](Navigation_onglets.png)
+
+</div>
+</div>
+
 
 \newpage
 
 ## Paramètres à choisir
-<p>&nbsp;&nbsp;Dans certaines parties de l’application, vous serez amenés à choisir des paramètres qui modifieront les sorties affichées. </p> 
-<p>&nbsp;&nbsp;Afin de rendre cette interactivité la plus fluide possible, nous avons ajouté un bouton de mise à jour sur lequel il vous faudra appuyer pour activer le changement des paramètres voulu. </p>
+<p>&nbsp;&nbsp;Dans certaines parties de l’application, vous êtes invités à choisir des paramètres qui modifieront les sorties affichées. </p> 
+<p>&nbsp;&nbsp;Afin de rendre cette interactivité la plus fluide possible, nous avons ajouté un bouton de mise à jour sur lequel il vous faudra cliquer pour activer le changement voulu des paramètres. </p>
 
 <br/>
 

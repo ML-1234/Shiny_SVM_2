@@ -92,7 +92,7 @@ shinyUI(fluidPage(theme = shinytheme("flatly"),
                                                    div(htmlOutput("intro"), align="justify"),
                                                    
                                                    
-                                                   h4(em("CAS LINEAIREMENT SEPARABLE"),align="center"),
+                                                   h2("Cas linéairement séparable"),
                                                   
                                                    div(htmlOutput("intro2"), align="justify"),
                                                    div(plotOutput("plot_linear", height = 300, width = 400), align="center"),
@@ -103,14 +103,14 @@ shinyUI(fluidPage(theme = shinytheme("flatly"),
                                                    div(htmlOutput("cout"), align="justify"),
                                                    
                                                    
-                                                   h4(em("CAS PRESQUE LINEAIREMENT SEPARABLE"),align="center"),
+                                                   h2("Cas presque linéairement séparable"),
                                                    
                                                    div(htmlOutput("cout2"), align="justify"),
                                                    div(plotOutput("plot_almostlinear_SVM", height = 300, width = 400), align="center"),
                                                    
                                                    div(htmlOutput("vr"), align="justify"),
                                                    
-                                                   h4(em("CAS NON LINEAIREMENT SEPARABLE"),align="center"),
+                                                   h2("Cas non linéairement séparable"),
                                                    
                                                    div(htmlOutput("vr2"), align="justify"),
                                                    div(plotOutput("plot_radial_SVM", height = 300, width = 400), align="center"),
@@ -135,7 +135,7 @@ shinyUI(fluidPage(theme = shinytheme("flatly"),
                                                      &nbsp;&nbsp;&nbsp;En réalisant les transformations de variables adéquates, on peut ainsi rendre linéairement séparable un problème qui ne l’est pas dans l’espace initial. <br> <br>
                                                      <ul>
                                                      <li> <strong> Noyau :</strong> aide à projeter des données dans un espace dimensionnel supérieur où les points peuvent être séparés linéairement.</li>
-                                                     <li> <strong> Coût de pénalisation :</strong> permet de pénaliser les erreurs plus ou moins fortement selon que l’on veuille plus ou moins coïncider aux données d’apprentissage. </li>
+                                                     <li> <strong> Coût de pénalisation :</strong> permet de pénaliser les erreurs plus ou moins fortement selon le niveau de coïncidence souhaité des données d’apprentissage. </li>
                                                      </ul>
                                                      "), align="justify"),
                                                     
