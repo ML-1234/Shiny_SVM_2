@@ -442,6 +442,55 @@ shinyServer(function(input, output) {
             legend.title = element_text(size = 15))
     
   })
+  # Courbes PR #
+  output$prcurve <-renderPlot({
+    
+    ##SVM
+    svm.fit.prob <-attr(svm.pred(),"probabilities")
+    ROCRpred_svm <- prediction(svm.fit.prob[,2], test$Class)
+    perf_svm <- ROCR::performance(ROCRpred_svm, 'prec','rec')
+    pr_svm.data <- data.frame(prec=perf_svm@x.values[[1]],
+                              rec=perf_svm@y.values[[1]], model="Support Vector Machine")
+    
+    ##Régression logistique
+    ROCRpred_glm <- prediction(glm.prob(), test$Class)
+    perf_glm <- ROCR::performance(ROCRpred_glm, 'prec','rec')
+    pr_glm.data <- data.frame(prec=perf_glm@x.values[[1]],
+                              rec=perf_glm@y.values[[1]], model="Régression logistique")
+    
+    ##Gradient Boosting
+    ROCRpred_gb <- prediction(boost.pred(), test$Class)
+    perf_gb <- ROCR::performance(ROCRpred_gb, 'prec','rec')
+    pr_gb.data <-data.frame(prec=perf_gb@x.values[[1]],
+                            rec=perf_gb@y.values[[1]], model="Gradient Boosting")
+    
+    ##Random Forest
+    train_ub$Class <- ifelse(train_ub$Class==1, 1,0)
+    test$Class <- ifelse(test$Class==1, 1,0)
+    rf.prob <- predict(rf.fit(),test,type="prob")
+    ROCRpred_rf <- prediction(rf.prob[,2], test$Class)
+    perf_rf <- ROCR::performance(ROCRpred_rf, 'prec','rec')
+    pr_rf.data <-  data.frame(prec=perf_rf@x.values[[1]],
+                              rec=perf_rf@y.values[[1]], model="Random Forest")
+    
+    ##Ensemble
+    ggplot() +
+      geom_line(data = pr_glm.data, aes(x=prec, y=rec, colour = "Régression Logistique")) +
+      geom_line(data = pr_rf.data, aes(x = prec, y=rec, colour = "Random Forest")) +
+      geom_line(data = pr_gb.data, aes(x = prec, y=rec, colour = "Gradient Boosting")) +
+      geom_line(data = pr_svm.data, aes(x = prec, y=rec, colour = "Support Vector Machine")) +
+      
+      #geom_abline(color = "red", linetype=2) + 
+      theme_bw() +
+      scale_colour_manual(name = "Modèles", values = cols) +
+      xlab("Recall") +
+      ylab("Precision") +
+      theme(legend.position = c(0.8, 0.2),
+            legend.text = element_text(size = 15),
+            legend.title = element_text(size = 15))
+    
+  })
+  
   
   
   # Tableau Comparaison #
@@ -452,6 +501,14 @@ shinyServer(function(input, output) {
     AUC_glm <- ROCR::performance(ROCRpred_glm, 'auc')
     AUC_glm <- paste(round(unlist(AUC_glm@y.values)*100, 3),"%")
     
+    perf_glm <- ROCR::performance(ROCRpred_glm, 'prec','rec')
+    pr_glm.data <- data.frame(prec=perf_glm@x.values[[1]],
+                              rec=perf_glm@y.values[[1]], model="Régression logistique")
+    ind = 2:length(perf_glm@x.values[[1]])
+    testglm=data.frame(recall = (perf_glm@x.values[[1]][ind] - perf_glm@x.values[[1]][ind-1]), precision = (perf_glm@y.values[[1]][ind] + perf_glm@y.values[[1]][ind-1]))
+    testglm = subset(testglm, !is.na(testglm$precision))
+    AUPRC_glm = paste(round(sum(testglm$recall * testglm$precision)/2*100,3),"%")
+    
     #Random Forest
     train_ub$Class <- ifelse(train_ub$Class==1, 1,0)
     test$Class <- ifelse(test$Class==1, 1,0)
@@ -460,21 +517,43 @@ shinyServer(function(input, output) {
     AUC_rf <- ROCR::performance(ROCRpred_rf, measure='auc')
     AUC_rf <- paste(round(unlist(AUC_rf@y.values)*100, 3),"%")
     
+    perf_rf <- ROCR::performance(ROCRpred_rf, 'prec','rec')
+    pr_rf.data <-  data.frame(prec=perf_rf@x.values[[1]],
+                              rec=perf_rf@y.values[[1]], model="Random Forest")
+    ind = 2:length(perf_rf@x.values[[1]])
+    testrf=data.frame(recall = (perf_rf@x.values[[1]][ind] - perf_rf@x.values[[1]][ind-1]), precision = (perf_rf@y.values[[1]][ind] + perf_rf@y.values[[1]][ind-1]))
+    testrf = subset(testrf, !is.na(testrf$precision))
+    AUPRC_rf = paste(round(sum(testrf$recall * testrf$precision)/2*100,3),"%")
+    
     #SVM
     svm.fit.prob <-attr(svm.pred(),"probabilities")
     ROCRpred_svm <- prediction(svm.fit.prob[,2], test$Class)
     AUC_svm <- ROCR::performance(ROCRpred_svm,'auc')
     AUC_svm <- paste(round(unlist(AUC_svm@y.values)*100, 3),"%")
     
+    perf_svm <- ROCR::performance(ROCRpred_svm, 'prec','rec')
+    pr_svm.data <- data.frame(prec=perf_svm@x.values[[1]],
+                              rec=perf_svm@y.values[[1]], model="Support Vector Machine")
+    ind <- 2:length(perf_svm@x.values[[1]])
+    testsvm <-data.frame(recall = (perf_svm@x.values[[1]][ind] - perf_svm@x.values[[1]][ind-1]), precision = (perf_svm@y.values[[1]][ind] + perf_svm@y.values[[1]][ind-1]))
+    testsvm <- subset(testsvm, !is.na(testsvm$precision))
+    AUPRC_svm <- paste(round(sum(testsvm$recall * testsvm$precision)/2*100,3),"%")
+    
     #Gradient Boosting
     ROCRpred_gb <- prediction(boost.pred(), test$Class)
     AUC_gb <- ROCR::performance(ROCRpred_gb, 'auc')
     AUC_gb <- paste(round(unlist(AUC_gb@y.values)*100, 3),"%")
     
+    perf_gb <- ROCR::performance(ROCRpred_gb, 'prec','rec')
+    pr_gb.data <-data.frame(prec=perf_gb@x.values[[1]],
+                            rec=perf_gb@y.values[[1]], model="Gradient Boosting")
+    ind = 2:length(perf_gb@x.values[[1]])
+    testgb=data.frame(recall = (perf_gb@x.values[[1]][ind] - perf_gb@x.values[[1]][ind-1]), precision = (perf_gb@y.values[[1]][ind] + perf_gb@y.values[[1]][ind-1]))
+    testgb = subset(testgb, !is.na(testgb$precision))
+    AUPRC_gb = paste(round(sum(testgb$recall * testgb$precision)/2*100,3),"%")
     
-    
-    df <- data.frame(SVM=c(erreur(cmsvm()),AUC_svm), RL=c(erreur(cmrl()),AUC_glm), GB=c(erreur(cmgb()),AUC_gb), RF=c(erreur(cmrf()),AUC_rf))
-    rownames(df)<-c("Taux d'erreur", "AUC")
+    df <- data.frame(SVM=c(erreur(cmsvm()),AUC_svm,AUPRC_svm), RL=c(erreur(cmrl()),AUC_glm,AUPRC_glm), GB=c(erreur(cmgb()),AUC_gb,AUPRC_gb), RF=c(erreur(cmrf()),AUC_rf,AUPRC_rf))
+    rownames(df)<-c("Taux d'erreur", "AUC", "AUPRC")
     colnames(df) <- c("Support Vector Machine","Régression Logistique","Gradient Boosting","Random Forest")
     df
     

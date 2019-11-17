@@ -215,6 +215,7 @@ shinyUI(fluidPage(theme = shinytheme("flatly"),
                                                  
                                                  h1("Comparaison et conclusion"),
                                                  div(plotOutput("roc", height=500, width=600), align="center"),
+                                                 div(plotOutput("prcurve", height=500, width=600), align="center"),
                                                  div(tableOutput("ma_table"),align="center")
                                         ))
                              ))))
