@@ -49,16 +49,14 @@ shinyUI(fluidPage(theme = shinytheme("flatly"),
                                                    
                                                    sidebarLayout(
                                                      sidebarPanel(
-                                                       HTML("<br/>"),
                                                        selectInput("var",label="Choisissez une variable :",choice=c( "V1"=1,     "V2"=2,     "V3"=3,     "V4"=4,     "V5"=5,     "V6"=6,     "V7"=7,    "V8"=8,    "V9"=9,     "V10"=10,    "V11"=11,    "V12"=12,    "V13"=13,    "V14"=14,   "V15"=15,    "V16"=16,   "V17"=17,   "V18"=18,   
-                                                                                                                     "V19"=19,   "V20"=20,    "V21"=21,    "V22"=22,    "V23"=23,   "V24"=24,   "V25"=25,    "V26"=26,    "V27"=27,    "V28"=28,    "Amount"=29, "Time"=30), selectize=FALSE)),
+                                                                                                                     "V19"=19,   "V20"=20,    "V21"=21,    "V22"=22,    "V23"=23,   "V24"=24,   "V25"=25,    "V26"=26,    "V27"=27,    "V28"=28,    "Amount"=29, "Time"=30), selectize=FALSE),
+                                                       submitButton("Mise à jour")),
+                                                     
                                                      mainPanel(
                                                        h3("Statistiques descriptives", align="center"),
                                                        div(verbatimTextOutput("sum"), align="center"),
-                                                       div(plotOutput("dist"), align="center"),
-                                                       
-                                                       h3("Matrice de corrélations", align="center"),
-                                                       div(plotOutput("cor", width=600, height=600), align="center")
+                                                       div(plotOutput("dist"), align="center")
                                                      )
                                                    ),
                                                    
@@ -89,11 +87,6 @@ shinyUI(fluidPage(theme = shinytheme("flatly"),
                                           h3("Distribution de la variable cible après traitement", align="center"),
                                           div(plotOutput("g4", height=500, width=400), align="center"),
 
-                                          
-                                          h3("Matrice de corrélations", align="center"),
-                                          div(plotOutput("cor2", width=600, height=600), align="center"),
-                                          
-                                          
                                           
                                           left="20%", right="20%" )
                                         ))),

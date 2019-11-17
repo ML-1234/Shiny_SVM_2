@@ -30,21 +30,6 @@ shinyServer(function(input, output) {
   
   
   ## --- Fonctions --- ##
-  # --- Fonction des P-values des corrélations --- #
-  cor.mtest <- function(mat, ...) {
-    mat <- as.matrix(mat)
-    n <- ncol(mat)
-    p.mat<- matrix(NA, n, n)
-    diag(p.mat) <- 0
-    for (i in 1:(n - 1)) {
-      for (j in (i + 1):n) {
-        tmp <- cor.test(mat[, i], mat[, j], ...)
-        p.mat[i, j] <- p.mat[j, i] <- tmp$p.value
-      }
-    }
-    colnames(p.mat) <- rownames(p.mat) <- colnames(mat)
-    p.mat
-  }
   
   
   # --- Fonction taux d'erreur --- #
@@ -141,13 +126,6 @@ shinyServer(function(input, output) {
     boxplot(x,horizontal=TRUE,col="brown",main=names(bdd[,as.numeric(input$var)]))
   })
   
-  output$cor <- renderPlot({
-    bdd_corr <- as.data.frame(lapply(bdd, as.numeric))
-    bdd_M <-cor(bdd_corr)
-    p.mat <- cor.mtest(bdd_corr)
-    
-    corrplot(bdd_M, type="upper", p.mat = p.mat, sig.level = 0.05)
-  })
   
   output$pa1 <- renderText({paste("\n<br/><p>&nbsp;&nbsp;&nbsp;Afin de pouvoir mettre en application la méthode des SVM, nous avons utilisé le base données mise « Credit Card Fraud Detection », téléchargeable sur le site Kaggle à l’adresse suivante :", a("Credit Card Fraud Detection", href="https://www.kaggle.com/mlg-ulb/creditcardfraud"), ".</p>")})
   
@@ -215,17 +193,6 @@ shinyServer(function(input, output) {
       scale_x_discrete(labels=c("Non-Frauduleuses", "Frauduleuses")) +
       theme(plot.title = element_text(hjust = 0.5, size = 20, face = "italic"))})
 
-  
-  output$cor2 <- renderPlot({
-    train_ub_corr <- as.data.frame(lapply(train_ub, as.numeric))
-    train_ub_M <-cor(train_ub_corr)
-    p.mat <- cor.mtest(train_ub_corr)
-    
-    corrplot(train_ub_M, type="upper", p.mat = p.mat, sig.level = 0.05)
-  })
-  
-  
-  
   
   
   
