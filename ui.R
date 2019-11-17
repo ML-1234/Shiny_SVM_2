@@ -1,6 +1,7 @@
 library(shiny)
 library(shinythemes)
 
+
 shinyUI(fluidPage(theme = shinytheme("flatly"),
                   
                   # Titre de l'application
@@ -8,25 +9,17 @@ shinyUI(fluidPage(theme = shinytheme("flatly"),
                   navbarPage("Sommaire",
                              
                              tabPanel("Préambule",
-                                      tabsetPanel(
-                                        
-                                        tabPanel("Présentation de l'application",
-                                                 absolutePanel(
-                                                 div(htmlOutput("pre",align="justify",width=500,height = 400)),
-                                                 left="20%", right = "20%"
-                                                 )),
-                                        
-                                        tabPanel("Notice d'utilisation à télécharger",
                                                  sidebarLayout(
                                                    sidebarPanel(
-                                                     #Ici vont les inputs réactifs du document rmarkdown
-                                                     #sliderInput("slider", "Slider", 1, 100, 50),
-                                                     downloadButton("Notice",
-                                                                    "Télécharger la notice")),
-                                                   
-                                                   mainPanel("Notice d'utilisation",
-                                                             includeMarkdown("Notice.Rmd")) )
-                                        ))),
+                                                     h3("Notice d'utilisation"),
+                                                     downloadButton("notice",
+                                                                    "Télécharger la notice"), width=3),
+                                                   mainPanel(
+                                                     HTML("<br/>"),
+                                                     h3("Présentation de l'application"),
+                                                     div(htmlOutput("pre",align="justify",width=500,height = 400))
+                                                 ))),
+                                        
                              
                              
                              tabPanel("Base de données",
