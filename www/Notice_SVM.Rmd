@@ -32,7 +32,6 @@ knitr::opts_chunk$set(echo = TRUE)
 <h3>    3.3.	Démonstration et Comparaison </h3>
 
 
-
 # Navigation
 ## Onglets
 
@@ -51,8 +50,9 @@ knitr::opts_chunk$set(echo = TRUE)
 \newpage
 
 ## Paramètres à choisir
-<p>&nbsp;&nbsp;Dans certaines parties de l’application, vous êtes invités à choisir des paramètres qui modifieront les sorties affichées. </p> 
-<p>&nbsp;&nbsp;Afin de rendre cette interactivité la plus fluide possible, nous avons ajouté un bouton de mise à jour sur lequel il vous faudra cliquer pour activer le changement voulu des paramètres. </p>
+<p>&nbsp;&nbsp;Dans certaines parties de l’application, vous êtes invités à choisir des paramètres qui modifieront les sorties affichées, afin de comprendre l'impact de ces paramètres sur les résultats de façon interactive. </p> 
+<p>&nbsp;&nbsp;Pour que cette interactivité soit la plus fluide possible, nous avons ajouté un bouton de mise à jour sur lequel il vous faudra cliquer pour activer le changement voulu des paramètres. </p>
+<p>&nbsp;&nbsp;Les valeurs intiales des paramètres correspondent à leur valeur optimale, soit celle qui minimise le taux d'erreur de classification. Ces valeurs ont été trouvées par optimisation, ainsi qu'en appliquant la méthode de validation croisée afin d'obtenir des résultats robustes. </p>
 
 <br/>
 

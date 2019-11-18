@@ -13,7 +13,7 @@ shinyUI(fluidPage(theme = shinytheme("flatly"),
                                         sidebarPanel(
                                           h3("Notice d'utilisation"),
                                           downloadButton("notice",
-                                                         "Télécharger la notice"), width=3),
+                                                         "Télécharger la notice")),
                                         mainPanel(
                                           HTML("<br/>"),
                                           h3("Présentation de l'application"),
