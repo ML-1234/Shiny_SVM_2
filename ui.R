@@ -138,8 +138,7 @@ shinyUI(fluidPage(theme = shinytheme("flatly"),
                                                      <li> <strong> Coût de pénalisation :</strong> permet de pénaliser les erreurs plus ou moins fortement selon le niveau de coïncidence souhaité des données d’apprentissage. </li>
                                                      </ul>
                                                      "), align="justify"),
-                                                     
-                                                     htmlOutput("optimal_svm"),
+                                                  
                                                      div(plotOutput("m_svm", height = 400, width = 500), align="center")
                                                    )),
                                                  
@@ -205,8 +204,8 @@ shinyUI(fluidPage(theme = shinytheme("flatly"),
                                                      <li> <strong> Paramètre de lissage (shrinkage) : </strong> s'il est trop faible, on aura une lenteur de convergence car les corrections seront timides. S’il est trop élevé,  on a des oscillations et donc sur-apprentissage. Bonne valeur usuelle autour de 0.1.</li>
                                                      </ul> "), align="justify"),
                                                      
-                                                     div(plotOutput("m_gb", height = 400, width = 500), align="center"),
-                                                     htmlOutput("optimal_gb")
+                                                     div(plotOutput("m_gb", height = 400, width = 500), align="center")
+                                                     
                                                    )
                                                  )),
                                                  
