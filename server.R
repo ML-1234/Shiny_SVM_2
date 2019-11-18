@@ -152,7 +152,7 @@ shinyServer(function(input, output) {
                                   "<p>&nbsp;&nbsp;&nbsp;On aura donc à la fois un problème de représentativité de la population par l’échantillon et avec l’aspect minimiseur 
                                   du taux d’erreur de l’algorithme du modèle en lui-même.</p>",
                                   "<p>&nbsp;&nbsp;&nbsp;Il se dessine alors deux méthodes de traitement des données asymétriques : changer l’algorithme ou rééquilibrer les données 
-                                  en utilisant des <strong> stratégies d’échantillonnage </strong>. C’est cette dernière technique que nous avons choisie de développer ici.</p>",
+                                  en utilisant des <strong> stratégies d’échantillonnage</strong>. C’est cette dernière technique que nous avons choisie de développer ici.</p>",
                                   "Dans les stratégies d’échantillonnage, il existe deux manières de procéder :")})
   
   output$p2b <- renderText({paste("\n<br/><ul><li> Le <strong> sur-échantillonnage </strong> : augmenter le nombre d’observations de la classe minoritaire en créant 
@@ -167,11 +167,11 @@ shinyServer(function(input, output) {
   
   
   output$p3 <- renderText({paste("\n<br/><p>&nbsp;&nbsp;&nbsp;Avant d’appliquer un quelconque traitement sur nos données, nous avons extrait de la base de données un <strong> échantillon 
-                                 de validation </strong>, afin de pouvoir vérifier la classification sur un échantillon qui a gardé l’asymétrie d’origine.</p>",
+                                 de validation</strong>, afin de pouvoir vérifier la classification sur un échantillon qui a gardé l’asymétrie d’origine.</p>",
                                  "<p>&nbsp;&nbsp;&nbsp;Toujours dans l’objectif de garder une application la plus fluide possible, nous avons retenu la méthode de 
-                                 sous-échantillonnage la plus simple : le <strong> sous-échantillonnage aléatoire </strong>, qui retire aléatoirement des observations de la classe majoritaire.</p>",
+                                 sous-échantillonnage la plus simple : le <strong> sous-échantillonnage aléatoire</strong>, qui retire aléatoirement des observations de la classe majoritaire.</p>",
                                  "<p>&nbsp;&nbsp;&nbsp;Afin de garder un nombre significatif d’observations ainsi que le caractère asymétrique de la base de données initiale 
-                                 dans l’échantillon, nous avons arbitrairement choisi de d’augmenter à <strong> 8% </strong> la part de transactions frauduleuses dans l’échantillon d’apprentissage.</p>")})
+                                 dans l’échantillon, nous avons arbitrairement choisi d’augmenter à <strong> 8% </strong> la part de transactions frauduleuses dans l’échantillon d’apprentissage.</p>")})
   
   
   output$p4 <- renderText({paste("\n<br/>&nbsp;&nbsp;&nbsp;La nouvelle base comprend", nrow(train_ub), "observations dont", sum(train_ub$Class==1), "transactions frauduleuses et",sum(train_ub$Class==0), "transactions non-frauduleuses.",  "\n","\n")})
@@ -228,7 +228,7 @@ shinyServer(function(input, output) {
            Pour le trouver, il suffit de chercher l’hyperplan pour lequel la distance entre la frontière des deux groupes et l’observation la plus proche est maximale.</p>",
            
            "<p>&nbsp;&nbsp;&nbsp;Le double de cette distance est appelée <b>marge</b>. On parlera donc de maximisation de la marge.
-           Il en résulte que les observations les plus proches de la frontière, appelées <b> vecteurs de supports </b>, sont les points situés sur les extrémités de la marge.</p>")
+           Il en résulte que les observations les plus proches de la frontière, appelées <b> vecteurs de supports</b>, sont les points situés sur les extrémités de la marge.</p>")
   })
   
   output$plot_linear_SVM <- renderPlot({
@@ -312,7 +312,8 @@ shinyServer(function(input, output) {
            Afin de trouver la séparation optimale on va alors chercher à <b>transformer l’espace de représentation des données d’entrée</b> en un espace de plus grandes dimensions.
            Pour se faire, on va rajouter des variables explicatives créées à partir de la transformation des variables initiales.</p>",
            "<p>&nbsp;&nbsp;&nbsp;Cette transformation se fait à l’aide des <b>fonctions kernels</b>. Elles sont très utile puisqu'il n'est pas besoin de connaître la transformation à appliquer.
-           Dans ce nouvel espace de plus grande dimension, il sera alors plus probable de trouver une séparation linéaire.</p>")
+           Dans ce nouvel espace de plus grande dimension, il sera alors plus probable de trouver une séparation linéaire.</p>
+           <br> <br> <br>")
     
   })
   
@@ -560,8 +561,8 @@ shinyServer(function(input, output) {
   output$comp1 <- renderText({paste("<br/>","<br/>",
                                     "<p>&nbsp;&nbsp;&nbsp;Afin de comparer efficacement les méthodes présentées dans la partie précédente (dont les choix des paramètres, s'ils ont été modifiés, sont repris ici), nous avons choisi de vous montrer à la fois les techniques usuelles (courbe ROC, AUC et taux d’erreur) et celles plus adaptées aux données asymétriques. </p>",
                                     "<p>&nbsp;&nbsp;&nbsp;En effet, ces dernières ayant un taux très faible d’observations de la même classe, il sera plus facile pour le classifieur de bien identifier les individus de l’échantillon de validation, sur la base d’une modélisation sur l’échantillon d’apprentissage, puisque la quasi-intégralité des observations de ces échantillons appartiennent à la classe majoritaire. </p>",
-                                    "<p>&nbsp;&nbsp;&nbsp;La structure de la base de données va donc se répercuter sur la classification elle-même. Les mesures habituelles, utilisées pour des données équilibrées, ne peuvent donc plus constituer de bons indicateurs de performances. Cependant, nous avons décidé ici de les présenter, afin d’appréhender ce phénomène au travers de statistiques montrant des résultats exceptionnels (taux d’erreur inférieur à 1% par exemple) et ne permettant pas de différencier clairement les performances des modèles. </p>",
-                                    "<p>&nbsp;&nbsp;&nbsp;Ainsi, pour efficacement les comparer, nous avons ajouté des Courbes dites « PR », plaçant la Précision en ordonnées et le Recall en abscisses. Ces dernières corrigent alors les problèmes dus à l’asymétrie des données, et permettent ainsi d’apprécier les performances réelles des modèles. </p>", "<br/>")})
+                                    "<p>&nbsp;&nbsp;&nbsp;La structure de la base de données va donc se répercuter sur la classification elle-même. Les mesures habituelles, utilisées pour des données équilibrées, ne peuvent donc plus constituer de bons indicateurs de performance. Cependant, nous avons décidé ici de les présenter, afin d’appréhender ce phénomène au travers de statistiques montrant des résultats exceptionnels (taux d’erreur inférieur à 1% par exemple) et ne permettant pas de différencier clairement les performances des modèles. </p>",
+                                    "<p>&nbsp;&nbsp;&nbsp;Ainsi, pour efficacement les comparer, nous avons ajouté des Courbes dites « PR », plaçant la Précision en ordonnée et le Recall en abscisse. Ces dernières corrigent alors les problèmes dus à l’asymétrie des données, et permettent ainsi d’apprécier les performances réelles des modèles. </p>", "<br/>")})
   
   output$comp2 <- renderText({paste("<br/>","<p>&nbsp;&nbsp;&nbsp;Enfin, afin de répertorier les chiffres clés de cette comparaison, nous avons mis en place le tableau suivant : </p>")})
   
@@ -569,7 +570,7 @@ shinyServer(function(input, output) {
                                     "<p>&nbsp;&nbsp;&nbsp;L’AUPRC (Aire sous la Courbe PR) est, quant à elle, une statistique corrigée et peut être interprétée à des fins de comparaison. </p>",
                                     "<p>&nbsp;&nbsp;&nbsp;La séparation aléatoire de l'échantillon et le sous-échantillonnage ayant été appliqués sans <em>seed</em> (sans reproductibilité à chaque exécution de code), les résultats de la comparaison peuvent varier. Néanmoins, on constate le plus souvent que, tant avec les Courbes PR qu’avec l’AUPRC, les <strong>Support Vector Machines</strong>, bien que n’obtenant pas le score le plus faible, <strong>restent une méthode moins efficace que le Gradient Boosting et, dans certains cas, que la Régression Logistique</strong>.  </p>",
                                     "<p>&nbsp;&nbsp;&nbsp;Le Gradient Boosting et les <strong>Support Vector Machines</strong> étant des méthodes de Machine Learning, elles représentent des avantages et inconvénients semblables. La performance suffirait alors, a priori, à les départager. </p>",
-                                    "<p>&nbsp;&nbsp;&nbsp;A l'inverse, la Régression Logistique est plus interprétable, mais moins flexible que les <strong>Support Vector Machines</strong>, puisqu’ils permettent, grâce aux kernels, des classifications de forme plus complexe. Ainsi il est plus difficile de les comparer seulement avec des mesures de performance. </p>")})
+                                    "<p>&nbsp;&nbsp;&nbsp;A l'inverse, la Régression Logistique est plus interprétable, mais moins flexible que les <strong>Support Vector Machines</strong>, puisqu’ils permettent, grâce aux kernels, des classifications de forme plus complexe. Ainsi il est plus difficile de les comparer seulement avec des mesures de performance. </p> <br> <br> <br>")})
   
   
 })
