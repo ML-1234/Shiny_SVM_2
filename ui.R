@@ -212,10 +212,15 @@ shinyUI(fluidPage(theme = shinytheme("flatly"),
                                                  
                                         tabPanel("Comparaison et Conclusion", 
                                                  absolutePanel(
-                                                 splitLayout(cellWidths = c("42%", "58%"), div(plotOutput("roc", height=400, width=440), align="center"), div(plotOutput("prcurve", height=400, width=655), align="center")),
+                                                 div(htmlOutput("comp1"), align="justify"),
+                                                 splitLayout(cellWidths = c("38%", "62%"), div(plotOutput("roc", height=320, width=345), align="center"), div(plotOutput("prcurve", height=320, width=565), align="center")),
                                                  
+                                                 div(htmlOutput("comp2"), align="justify"),
                                                  h3("Tableau de comparaison", align="center"),
                                                  div(tableOutput("ma_table"),align="center"),
-                                                 left="10%", right = "10%")
+                                                 
+                                                 div(htmlOutput("comp3"), align="justify"),
+                                                 
+                                                 left="20%", right = "20%")
                                         ))
                              ))))

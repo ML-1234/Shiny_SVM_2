@@ -435,6 +435,8 @@ shinyServer(function(input, output) {
       theme(legend.position = "none")
     
   })
+  
+  
   # Courbes PR #
   output$prcurve <-renderPlot({
     
@@ -552,5 +554,21 @@ shinyServer(function(input, output) {
     
     
   },digits=4, striped = TRUE, bordered = TRUE, rownames=TRUE,width=600) 
+  
+  # Analyse #
+  
+  output$comp1 <- renderText({paste("<br/>","<br/>",
+                                    "<p>&nbsp;&nbsp;&nbsp;Afin de comparer efficacement les modèles présentés dans la partie précédente, nous avons choisi de vous montrer à la fois les techniques usuelles (courbe ROC, AUC et taux d’erreur) et celles plus adaptées aux données asymétriques. </p>",
+                                    "<p>&nbsp;&nbsp;&nbsp;En effet, ces dernières ayant un taux très faible d’observations de la même classe, il sera plus facile pour le classifieur de bien identifier les individus de l’échantillon de validation, sur la base d’une modélisation sur l’échantillon d’apprentissage, puisque la quasi-intégralité des observations de ces échantillons appartiennent à la classe majoritaire. </p>",
+                                    "<p>&nbsp;&nbsp;&nbsp;La structure de la base de données va donc se répercuter sur la classification elle-même. Les mesures habituelles, utilisées pour des données équilibrées, ne peuvent donc plus constituer de bons indicateurs de performances. Cependant, nous avons décidé ici de les présenter, afin d’appréhender ce phénomène au travers de statistiques montrant des résultats exceptionnels (taux d’erreur inférieur à 1% par exemple) et ne permettant pas de différencier clairement les performances des modèles. </p>",
+                                    "<p>&nbsp;&nbsp;&nbsp;Ainsi, pour efficacement les comparer, nous avons ajouté des Courbes dites « PR », plaçant la Précision en ordonnées et le Recall en abscisses. Ces dernières corrigent alors les problèmes dus à l’asymétrie des données, et permettent ainsi d’apprécier les performances réelles des modèles. </p>", "<br/>")})
+  
+  output$comp2 <- renderText({paste("<br/>","<p>&nbsp;&nbsp;&nbsp;Enfin, afin de répertorier les chiffres clés de cette comparaison, nous avons mis en place le tableau suivant : </p>")})
+  
+  output$comp3 <- renderText({paste("<br/>", "<p>&nbsp;L’AUC (Aire sous la Courbe ROC) fait partie des statistiques non-corrigées de l’asymétrie des données, ainsi son niveau est exceptionnellement élevé pour chaque modèle et ne permet pas de juger des performances réelles. </p>",
+                                    "<p>&nbsp;&nbsp;&nbsp;L’AUPRC (Aire sous la Courbe PR) est, quant à elle, une statistique corrigée et peut être interprétée à des fins de comparaison. </p>",
+                                    "<p>&nbsp;&nbsp;&nbsp;On peut constater que, tant avec les Courbes PR qu’avec l’AUPRC, les <strong>Support Vector Machines</strong>, bien que n’obtenant pas le score le plus faible, <strong>restent une méthode moins efficace que la Régression Logistique et le Gradient Boosting</strong>.  </p>",
+                                    "<p>&nbsp;&nbsp;&nbsp;Elle est aussi moins interprétable que la Régression Logistique, mais plus flexible, puisqu’elle permet, grâce aux kernels, des classifications de forme plus complexe.  </p>")})
+  
   
 })
