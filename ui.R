@@ -119,7 +119,7 @@ shinyUI(fluidPage(theme = shinytheme("flatly"),
                                                    
                                                    left="20%", right = "20%")
                                         ),
-                                        tabPanel("Modèles",
+                                        tabPanel("Méthodes",
                                                  h1("Application de la méthode des SVM"),
                                                  sidebarLayout(
                                                    sidebarPanel(
@@ -169,8 +169,8 @@ shinyUI(fluidPage(theme = shinytheme("flatly"),
                                                  sidebarLayout(
                                                    sidebarPanel(
                                                      helpText("Choisissez vos paramètres :"),
-                                                     sliderInput("mtry","Nombre de variables sélectionnées",min=0, max=30, value=15), 
-                                                     sliderInput("ntree","Nombre d'arbres dans la forêt",min=0, max=500, value=250),
+                                                     sliderInput("mtry","Nombre de variables sélectionnées",min=0, max=30, value=2), 
+                                                     sliderInput("ntree","Nombre d'arbres dans la forêt",min=0, max=500, value=90),
                                                      submitButton("Mise à jour")
                                                    ),
                                                    mainPanel(
@@ -181,18 +181,17 @@ shinyUI(fluidPage(theme = shinytheme("flatly"),
                                                      <li> <strong> Nombre d’arbres dans la forêt :</strong> plus le nombre d’arbres sera grand, et plus votre prédiction sera robuste.</li>
                                                      </ul> "), align="justify"),
                                                      
-                                                     htmlOutput("optimal"),
-                                                     htmlOutput("selected_param"),
-                                                     div(plotOutput("confusion_rf", height = 400, width = 500), align="center"),
-                                                     textOutput("erreur_rf")
-                                                   )),
+                                                     
+                                                     div(plotOutput("confusion_rf", height = 400, width = 500), align="center")
+                                                     
+                                                       )),
                                                  
                                                  h3("Gradient Boosting"),
                                                  sidebarLayout(
                                                    sidebarPanel(
                                                      helpText("Choisissez vos paramètres :"),
-                                                     sliderInput("max_prof","Profondeur maximale de l'arbre", min=1, max=20,value=5),
-                                                     sliderInput("skrinkage", "Paramètre de lissage",min=0,max=1,value=0.5),
+                                                     sliderInput("max_prof","Profondeur maximale de l'arbre", min=1, max=20,value=3),
+                                                     sliderInput("skrinkage", "Paramètre de lissage",min=0,max=1,value=0.3),
                                                      submitButton("Mise à jour")
                                                    ),
                                                    mainPanel(
@@ -212,7 +211,7 @@ shinyUI(fluidPage(theme = shinytheme("flatly"),
                                                  )),
                                                  
                                                  
-                                        tabPanel("Comparaison et conclusion", 
+                                        tabPanel("Comparaison et Conclusion", 
                                                  absolutePanel(
                                                  splitLayout(cellWidths = c("42%", "58%"), div(plotOutput("roc", height=400, width=440), align="center"), div(plotOutput("prcurve", height=400, width=655), align="center")),
                                                  

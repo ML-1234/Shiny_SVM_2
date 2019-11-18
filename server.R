@@ -354,17 +354,11 @@ shinyServer(function(input, output) {
   rf.pred <- reactive({predict(rf.fit(),test,type="response")})
   cmrf <- reactive({confusionMatrix(rf.pred(), test$Class)})
   
-  output$selected_param <- renderText({ 
-    paste( "Vous avez choisi un nombre de feuilles égal à", input$mtry, "et un nombre d'arbres égal à", input$ntree,". <br> <br>")
-  })
   
   #Matrice de confusion
   output$confusion_rf <- renderPlot({draw_confusion_matrix(cmrf(), cols[4])})
   
-  output$erreur_rf <- renderText({
-    taux_erreur <- paste(round((1 - sum(diag(cmrf()$table))/sum(cmrf()$table))*100, 3),"%")
-    paste( "L'erreur est de", taux_erreur,".")
-  })
+  
   
   
   # --- Gradient Boosting --- #
